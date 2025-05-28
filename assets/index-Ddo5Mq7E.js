@@ -38434,21 +38434,23 @@ const cP = () => {
       [t, r] = T.useState(!1),
       [i, l] = T.useState(""),
       [s, c] = T.useState(""),
-      f = (d) => {
-        r(!0), d.preventDefault();
-        const h = new FormData();
-        h.append("email", i),
-          h.append("password", s),
-          fetch(`${Ml}/admin/api`, { method: "POST", body: h })
-            .then(async (g) => {
-              const x = await g.json();
+      [f, d] = T.useState(""),
+      h = (g) => {
+        r(!0), g.preventDefault();
+        const x = new FormData();
+        x.append("email", i),
+          x.append("password", s),
+          fetch(`${Ml}/admin/api`, { method: "POST", body: x })
+            .then(async (b) => {
+              const y = await b.json();
               r(!1),
-                x.redirect &&
-                  (sessionStorage.setItem("userEmail", x.email), e("/")),
-                console.log(x);
+                y.redirect &&
+                  (sessionStorage.setItem("userEmail", y.email), e("/"));
             })
-            .catch((g) => {
-              console.error(g), r(!1);
+            .catch((b) => {
+              console.error(b),
+                d("Login failed. Please check your credentials."),
+                r(!1);
             });
       };
     return z.jsxs("div", {
@@ -38468,7 +38470,7 @@ const cP = () => {
                 }),
                 z.jsxs("form", {
                   className: "space-y-4",
-                  onSubmit: f,
+                  onSubmit: h,
                   children: [
                     z.jsxs("div", {
                       children: [
@@ -38486,7 +38488,7 @@ const cP = () => {
                           required: !0,
                           className:
                             "w-full border border-gray-300 rounded px-3 py-2",
-                          onChange: (d) => l(d.target.value),
+                          onChange: (g) => l(g.target.value),
                         }),
                       ],
                     }),
@@ -38506,10 +38508,15 @@ const cP = () => {
                           required: !0,
                           className:
                             "w-full border border-gray-300 rounded px-3 py-2",
-                          onChange: (d) => c(d.target.value),
+                          onChange: (g) => c(g.target.value),
                         }),
                       ],
                     }),
+                    f &&
+                      z.jsx("p", {
+                        className: "text-red-500 text-sm text-center !mb-4",
+                        children: f,
+                      }),
                     z.jsx("button", {
                       disabled: t,
                       type: "submit",
