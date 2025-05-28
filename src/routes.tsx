@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router";
+import { createHashRouter } from "react-router";
 import App from "./App";
 import Orders from "./components/orders";
 import Layout from "./components/layout";
@@ -6,7 +6,8 @@ import Subscribers from "./components/subscribers";
 import Subscriber from "./components/subscriber";
 import Login from "./auth/login";
 
-export const router = createBrowserRouter([
+export const router = createHashRouter([
+  {},
   { index: true, element: <App /> },
   { path: "/login", element: <Login /> },
   {
