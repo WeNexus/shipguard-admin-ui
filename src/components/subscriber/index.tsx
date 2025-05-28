@@ -10,6 +10,7 @@ import type { IPackagePackageProtection, ProtectionOrderList } from "./type";
 
 const Subscriber = () => {
   const { storeId } = useParams<{ storeId: string }>();
+  console.log("Store ID:", storeId);
   const [reFetch, setReFetch] = useState<boolean>(false);
 
   const [orders, setOrders] = useState<ProtectionOrderList>([]);
@@ -36,10 +37,10 @@ const Subscriber = () => {
         <div className="flex gap-2">
           <Button
             icon={ArrowLeftIcon}
-            onClick={() => (location.href = "/subscribers")}
+            onClick={() => (location.href = "/#/subscribers")}
           ></Button>{" "}
           <span className="text-2xl font-bold">
-            {orders.length > 0 ? orders[0]?.Store.name : ""}
+            {orders.length > 0 ? orders[0]?.Store.name : "Subscriber Details"}
           </span>
         </div>
         <div className="text-lg">
@@ -49,8 +50,8 @@ const Subscriber = () => {
       </div>
       <h2>
         Store domain:{" "}
-        <Link url={`https://${domain}`} removeUnderline target="_blank">
-          {domain}
+        <Link url={`https://${storeId}`} removeUnderline target="_blank">
+          {storeId}
         </Link>
       </h2>
 

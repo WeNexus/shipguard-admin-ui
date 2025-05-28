@@ -9,9 +9,9 @@ import Login from "./auth/login";
 export const router = createHashRouter([
   {},
   { index: true, element: <App /> },
-  { path: "/login", element: <Login /> },
+  { path: "login", element: <Login /> },
   {
-    path: "/orders",
+    path: "orders",
     element: (
       <Layout>
         <Orders />
@@ -19,7 +19,7 @@ export const router = createHashRouter([
     ),
   },
   {
-    path: "/subscribers",
+    path: "subscribers",
     element: (
       <Layout>
         <Subscribers />

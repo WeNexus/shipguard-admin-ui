@@ -1,4 +1,4 @@
-// export const BASE_URL =
-// "https://machinery-qualified-viruses-ecuador.trycloudflare.com";
+export const BASE_URL =
+  " https://me-receiver-madonna-bulgaria.trycloudflare.com";
 
-export const BASE_URL = "https://shipguard.app";
+// export const BASE_URL = "https://shipguard.app";

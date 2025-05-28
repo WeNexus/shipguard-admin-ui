@@ -7,7 +7,6 @@ import {
   Spinner,
   Badge,
   Text,
-  Link,
 } from "@shopify/polaris";
 import type { TabProps } from "@shopify/polaris";
 import { useState, useMemo, useEffect } from "react";
@@ -15,6 +14,7 @@ import { moneyFormater } from "../../utils/money-format";
 import SwitchButton from "../common/switch-button";
 import type { StoreRecordList } from "./type";
 import { BASE_URL } from "../../config";
+import { Link } from "react-router";
 
 const SubscriberList = ({
   stores,
@@ -166,7 +166,7 @@ const SubscriberList = ({
         position={index}
       >
         <IndexTable.Cell>
-          <Link removeUnderline url={`/subscribers/${domain}`}>
+          <Link to={`${domain}`} className="text-blue-700">
             <Text variant="bodyMd" fontWeight="bold" as="span">
               {storeName}
             </Text>
