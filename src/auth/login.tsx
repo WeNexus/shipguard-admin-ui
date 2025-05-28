@@ -9,6 +9,7 @@ const Login = () => {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const handleSubmit = (e: any) => {
     setLoading(true);
@@ -23,16 +24,15 @@ const Login = () => {
     })
       .then(async (res) => {
         const data = await res.json();
-
         setLoading(false);
         if (data.redirect) {
-          sessionStorage.setItem("userEmail", data.email);
+          localStorage.setItem("userEmail", data.email);
           navigate("/");
         }
-        console.log(data);
       })
       .catch((err) => {
         console.error(err);
+        setError("Login failed. Please check your credentials.");
         setLoading(false);
       });
   };
@@ -86,6 +86,9 @@ const Login = () => {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
+            {error && (
+              <p className="text-red-500 text-sm text-center !mb-4">{error}</p>
+            )}
             <button
               disabled={loading}
               type="submit"

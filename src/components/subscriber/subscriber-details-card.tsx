@@ -7,37 +7,34 @@ import {
   XCircleIcon,
 } from "@shopify/polaris-icons";
 import { moneyFormater } from "../../utils/money-format";
-import type { ProtectionOrderList } from "./type";
 
-const SubscriberDetailsCart = ({ orders }: { orders: ProtectionOrderList }) => {
+const SubscriberDetailsCart = ({
+  stats,
+  moneyFormat,
+}: {
+  stats: any;
+  moneyFormat: string;
+}) => {
+  // console.log("SubscriberDetailsCart stats", moneyFormat);
+
   const dashboardCartItems: {
     title: string;
     value: number | string;
     bg?: string;
     icon: ReactNode;
   }[] = useMemo(() => {
-    const totalOrders = orders.length ?? 0;
-    const moneyFormat = orders[0]?.Store.currencyCode ?? "$";
-    const protectedOrders =
-      orders.filter((e) => e.hasPackageProtection).length ?? 0;
-    const unProtectedOrders =
-      orders.filter((e) => !e.hasPackageProtection).length ?? 0;
-    const conversionRate = isNaN((protectedOrders / totalOrders) * 100)
-      ? 0
-      : (protectedOrders / totalOrders) * 100;
-    const securedRevenue = orders.reduce((sum, order) => {
-      return order.hasPackageProtection
-        ? sum + parseFloat(order.orderAmount)
-        : sum;
-    }, 0);
-    const insuranceEarning = orders.reduce(
-      (sum, order) => sum + parseFloat(order.protectionFee),
-      0
-    );
+    const {
+      totalOrder,
+      protectedOrder,
+      unprotectedOrder,
+      securedRevenue,
+      insuranceEarning,
+    } = stats || {};
+    const conversionRate = protectedOrder / totalOrder || 0;
     return [
       {
         title: "Total Orders",
-        value: orders.length ?? 0,
+        value: totalOrder ?? 0,
         bg: "#ffffff",
         icon: (
           <div className="bg-blue-400 p-3 rounded text-white">
@@ -48,7 +45,7 @@ const SubscriberDetailsCart = ({ orders }: { orders: ProtectionOrderList }) => {
       },
       {
         title: "Protected Orders",
-        value: protectedOrders,
+        value: protectedOrder,
         bg: "#cff1cf",
         icon: (
           <div className="bg-green-500 p-3 rounded text-white">
@@ -58,7 +55,7 @@ const SubscriberDetailsCart = ({ orders }: { orders: ProtectionOrderList }) => {
       },
       {
         title: "Unprotected Orders",
-        value: unProtectedOrders,
+        value: unprotectedOrder,
         bg: "#ffd2e9",
         icon: (
           <div className="bg-red-500 p-3 rounded text-white">
@@ -97,7 +94,7 @@ const SubscriberDetailsCart = ({ orders }: { orders: ProtectionOrderList }) => {
         ),
       },
     ];
-  }, [orders]);
+  }, [stats]);
 
   return (
     //bg-red-300 sm:bg-green-400 md:bg-blue-500 lg:bg-yellow-500 xl:bg-pink-500

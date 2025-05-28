@@ -1,5 +1,5 @@
 export default function useAuth() {
-  const auth = sessionStorage.getItem("userEmail") || false;
+  const auth = localStorage.getItem("userEmail") || false;
 
   if (auth) {
     return true;

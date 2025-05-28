@@ -7,8 +7,7 @@ import {
   Badge,
 } from "@shopify/polaris";
 import type { TabProps } from "@shopify/polaris";
-import { useMemo, useState } from "react";
-import useDebounce from "../../hooks/debounce";
+import { useEffect, useMemo, useState } from "react";
 import { moneyFormater } from "../../utils/money-format";
 import type { ProtectionOrders } from "./type";
 
@@ -16,10 +15,22 @@ const SubscriberOrderList = ({
   orders,
   withStoreName = false,
   loading = false,
+  pagination,
+  page = 1,
+  setPage = () => {},
+  setFilters = () => {},
+  setQueryValue = () => {},
+  queryValue,
 }: {
   orders: ProtectionOrders;
   withStoreName?: boolean;
   loading?: boolean;
+  pagination: Record<string, any>;
+  page: number;
+  setPage: Function;
+  setFilters: Function;
+  setQueryValue: Function;
+  queryValue: string;
 }) => {
   const [itemStrings] = useState(["All", "Protected", "Unprotected"]);
 
@@ -33,12 +44,6 @@ const SubscriberOrderList = ({
 
   const [selected, setSelected] = useState(0);
   const { mode, setMode } = useSetIndexFiltersMode();
-  const [queryValue, setQueryValue] = useState("");
-  const [total, setTotal] = useState(0);
-  const searchTerm = useDebounce(queryValue, 700);
-  const itemsPerPage = 10;
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPage, setTotalPage] = useState(1);
 
   const headings: any = useMemo(() => {
     if (withStoreName)
@@ -63,29 +68,18 @@ const SubscriberOrderList = ({
     ];
   }, [withStoreName]);
 
-  const rowMarkup = useMemo(() => {
-    const searchAndFilterData = orders
-      .filter(
-        (order) =>
-          order?.orderName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          order?.Store?.name?.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-      .filter((order) => {
-        if (selected === 0) return true;
-        if (selected === 1) return order.hasPackageProtection;
-        return !order.hasPackageProtection;
-      });
-    setTotal(searchAndFilterData.length);
-    const paginatedData = searchAndFilterData.slice(
-      (currentPage - 1) * itemsPerPage,
-      currentPage * itemsPerPage
-    );
-    setTotalPage(() => Math.ceil(searchAndFilterData.length / itemsPerPage));
-    if (currentPage > totalPage) {
-      setCurrentPage(1);
+  useEffect(() => {
+    if (selected === 0) {
+      setFilters("all");
+    } else if (selected === 1) {
+      setFilters("protected");
+    } else {
+      setFilters("unprotected");
     }
+  }, [selected]);
 
-    return paginatedData?.map(
+  const rowMarkup = useMemo(() => {
+    return orders?.map(
       (
         {
           id,
@@ -212,7 +206,7 @@ const SubscriberOrderList = ({
         );
       }
     );
-  }, [orders, currentPage, searchTerm, selected, totalPage]);
+  }, [orders]);
 
   return (
     <LegacyCard>
@@ -242,15 +236,15 @@ const SubscriberOrderList = ({
         headings={headings}
         loading={loading}
         pagination={{
-          hasPrevious: currentPage > 1,
+          hasPrevious: pagination?.hasPrevPage,
           label: (
             <>
-              {currentPage} / {totalPage}
+              {page} / {pagination?.totalPages}
             </>
           ),
-          hasNext: total > currentPage * itemsPerPage,
-          onNext: () => setCurrentPage((prev) => prev + 1),
-          onPrevious: () => setCurrentPage((prev) => Math.max(prev - 1, 1)),
+          hasNext: pagination?.hasNextPage,
+          onNext: () => setPage((prev: number) => prev + 1),
+          onPrevious: () => setPage((prev: number) => prev - 1),
         }}
         selectable={false}
       >

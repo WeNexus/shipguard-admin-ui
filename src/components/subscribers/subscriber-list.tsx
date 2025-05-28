@@ -227,7 +227,7 @@ const SubscriberList = ({
           { title: "Conversion Rate" },
           { title: "Shopify Status" },
           { title: "Country" },
-          { title: "Created At" },
+          { title: "Installed At" },
           { title: "Status" },
         ]}
         pagination={{

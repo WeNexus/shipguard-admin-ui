@@ -21,7 +21,7 @@ const Subscribers = () => {
   useEffect(() => {
     setLoading(true);
     fetch(
-      `${BASE_URL}/admin/api/subscriber?page=${page}&limit=10&filter=${filters}&searchTerm=${searchTerm}`
+      `${BASE_URL}/admin/api/subscriber?page=${page}&limit=50&filter=${filters}&searchTerm=${searchTerm}`
     )
       .then((res) => res.json())
       .then((res) => {
