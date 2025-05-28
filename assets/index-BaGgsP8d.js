@@ -20701,7 +20701,7 @@ const hA = ({ data: e }) => {
       period: { since: new Date(t).toISOString(), until: e.toISOString() },
     };
   },
-  Ml = " https://me-receiver-madonna-bulgaria.trycloudflare.com";
+  Ml = "https://shipguard.app";
 function zy(e, t) {
   const [r, i] = T.useState(e);
   return (
