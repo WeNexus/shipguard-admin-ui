@@ -1,0 +1,263 @@
+import {
+  IndexTable,
+  LegacyCard,
+  IndexFilters,
+  useSetIndexFiltersMode,
+  Text,
+  Badge,
+} from "@shopify/polaris";
+import type { TabProps } from "@shopify/polaris";
+import { useMemo, useState } from "react";
+import useDebounce from "../../hooks/debounce";
+import { moneyFormater } from "../../utils/money-format";
+import type { ProtectionOrders } from "./type";
+
+const SubscriberOrderList = ({
+  orders,
+  withStoreName = false,
+  loading = false,
+}: {
+  orders: ProtectionOrders;
+  withStoreName?: boolean;
+  loading?: boolean;
+}) => {
+  const [itemStrings] = useState(["All", "Protected", "Unprotected"]);
+
+  const tabs: TabProps[] = itemStrings.map((item, index) => ({
+    content: item,
+    index,
+    onAction: () => {},
+    id: `${item}-${index}`,
+    isLocked: index === 0,
+  }));
+
+  const [selected, setSelected] = useState(0);
+  const { mode, setMode } = useSetIndexFiltersMode();
+  const [queryValue, setQueryValue] = useState("");
+  const [total, setTotal] = useState(0);
+  const searchTerm = useDebounce(queryValue, 700);
+  const itemsPerPage = 10;
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPage, setTotalPage] = useState(1);
+
+  const headings: any = useMemo(() => {
+    if (withStoreName)
+      return [
+        { title: "Order" },
+        { title: "Store Name" },
+        { title: "Protection Fees" },
+        { title: "Order Amount" },
+        { title: "Order Status" },
+        { title: "Fulfillment status" },
+        { title: "Claim status" },
+        { title: "Created At" },
+      ];
+    return [
+      { title: "Order" },
+      { title: "Protection Fees" },
+      { title: "Order Amount" },
+      { title: "Order Status" },
+      { title: "Fulfillment status" },
+      { title: "Claim status" },
+      { title: "Created At" },
+    ];
+  }, [withStoreName]);
+
+  const rowMarkup = useMemo(() => {
+    const searchAndFilterData = orders
+      .filter(
+        (order) =>
+          order?.orderName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          order?.Store?.name?.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+      .filter((order) => {
+        if (selected === 0) return true;
+        if (selected === 1) return order.hasPackageProtection;
+        return !order.hasPackageProtection;
+      });
+    setTotal(searchAndFilterData.length);
+    const paginatedData = searchAndFilterData.slice(
+      (currentPage - 1) * itemsPerPage,
+      currentPage * itemsPerPage
+    );
+    setTotalPage(() => Math.ceil(searchAndFilterData.length / itemsPerPage));
+    if (currentPage > totalPage) {
+      setCurrentPage(1);
+    }
+
+    return paginatedData?.map(
+      (
+        {
+          id,
+          orderName,
+          protectionFee,
+          orderAmount,
+          fulfillmentStatus,
+          orderDate,
+          hasClaimRequest,
+          hasPackageProtection,
+          PackageProtectionClaimOrder,
+          Store,
+        },
+        index
+      ) => {
+        const status = PackageProtectionClaimOrder?.map((i) => i.claimStatus);
+        const claimStatus:
+          | "Requested"
+          | "Processing"
+          | "Canceled"
+          | "Approved" = status?.every((i) => i === "CANCEL")
+          ? "Canceled"
+          : status?.every((i) => i === "REQUESTED")
+          ? "Requested"
+          : status?.every((i) => i === "APPROVE")
+          ? "Approved"
+          : "Processing";
+        return (
+          <IndexTable.Row id={id.toString()} key={id} position={index}>
+            <IndexTable.Cell>
+              <Text variant="bodyMd" fontWeight="bold" as="span">
+                {orderName}
+              </Text>
+            </IndexTable.Cell>
+            {withStoreName && <IndexTable.Cell>{Store.name}</IndexTable.Cell>}
+            <IndexTable.Cell>
+              {moneyFormater(protectionFee, Store.currencyCode)}
+            </IndexTable.Cell>
+            <IndexTable.Cell>
+              <Text as="span" numeric>
+                {moneyFormater(orderAmount, Store.currencyCode)}
+              </Text>
+            </IndexTable.Cell>
+            <IndexTable.Cell>
+              <span className="capitalize">
+                <Badge
+                  progress={hasPackageProtection ? "complete" : "incomplete"}
+                  tone={hasPackageProtection ? "success" : "critical"}
+                >
+                  {hasPackageProtection ? "Protected" : "Non Protected"}
+                </Badge>
+              </span>
+            </IndexTable.Cell>
+            <IndexTable.Cell>
+              <span className="capitalize">
+                <Badge
+                  progress={
+                    fulfillmentStatus === "PARTIALLY_FULFILLED"
+                      ? "partiallyComplete"
+                      : fulfillmentStatus === "FULFILLED"
+                      ? "complete"
+                      : "incomplete"
+                  }
+                  tone={
+                    fulfillmentStatus === "PARTIALLY_FULFILLED"
+                      ? "warning"
+                      : fulfillmentStatus === "FULFILLED"
+                      ? "success"
+                      : "attention"
+                  }
+                >
+                  {fulfillmentStatus.toLowerCase()}
+                </Badge>
+              </span>
+            </IndexTable.Cell>
+
+            <IndexTable.Cell>
+              {hasClaimRequest ? (
+                <div className="">
+                  <Badge
+                    progress={
+                      claimStatus === "Requested"
+                        ? "incomplete"
+                        : claimStatus === "Approved"
+                        ? "complete"
+                        : "partiallyComplete"
+                    }
+                    tone={
+                      claimStatus === "Approved"
+                        ? "success"
+                        : claimStatus === "Canceled"
+                        ? "critical"
+                        : claimStatus === "Requested"
+                        ? "warning"
+                        : "info"
+                    }
+                  >
+                    {claimStatus}
+                  </Badge>
+                  <Badge
+                    tone={
+                      claimStatus === "Approved"
+                        ? "success"
+                        : claimStatus === "Canceled"
+                        ? "critical"
+                        : claimStatus === "Requested"
+                        ? "warning"
+                        : "info"
+                    }
+                  >
+                    {PackageProtectionClaimOrder?.length.toString()}
+                  </Badge>
+                </div>
+              ) : (
+                <Text as="span" alignment="start">
+                  -
+                </Text>
+              )}
+            </IndexTable.Cell>
+            <IndexTable.Cell>
+              {new Date(orderDate).toDateString()}
+            </IndexTable.Cell>
+          </IndexTable.Row>
+        );
+      }
+    );
+  }, [orders, currentPage, searchTerm, selected, totalPage]);
+
+  return (
+    <LegacyCard>
+      <IndexFilters
+        sortOptions={[]}
+        queryValue={queryValue}
+        queryPlaceholder="Searching in Order Name"
+        onQueryChange={(value: string) => setQueryValue(value)}
+        onQueryClear={() => setQueryValue("")}
+        tabs={tabs}
+        selected={selected}
+        onSelect={setSelected}
+        filters={[]}
+        onClearAll={() => setQueryValue("")}
+        cancelAction={{
+          onAction: () => {},
+          disabled: false,
+          loading: false,
+        }}
+        loading={loading}
+        mode={mode}
+        setMode={setMode}
+      />
+      <IndexTable
+        condensed={false}
+        itemCount={orders.length}
+        headings={headings}
+        loading={loading}
+        pagination={{
+          hasPrevious: currentPage > 1,
+          label: (
+            <>
+              {currentPage} / {totalPage}
+            </>
+          ),
+          hasNext: total > currentPage * itemsPerPage,
+          onNext: () => setCurrentPage((prev) => prev + 1),
+          onPrevious: () => setCurrentPage((prev) => Math.max(prev - 1, 1)),
+        }}
+        selectable={false}
+      >
+        {rowMarkup}
+      </IndexTable>
+    </LegacyCard>
+  );
+};
+
+export default SubscriberOrderList;
