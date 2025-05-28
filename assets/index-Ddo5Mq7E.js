@@ -38362,7 +38362,8 @@ const cP = () => {
                 children: [
                   z.jsx(Tr, {
                     icon: L1,
-                    onClick: () => (location.href = "/#/subscribers"),
+                    onClick: () =>
+                      (location.href = "/shipguard-admin-ui/#/subscribers"),
                   }),
                   " ",
                   z.jsx("span", {
