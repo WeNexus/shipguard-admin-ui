@@ -1,4 +1,4 @@
-import { Box, Text } from "@shopify/polaris";
+import { Box } from "@shopify/polaris";
 import AdminOrderCard from "./admin-order-card";
 import { useEffect, useMemo, useState } from "react";
 import DateRangePicker from "../common/date-range-picker";
