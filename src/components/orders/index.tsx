@@ -10,7 +10,7 @@ import useDebounce from "../../hooks/debounce";
 
 const Orders = () => {
   const [orders, setOrders] = useState<any>([]);
-
+  const [stats, setStats] = useState<any>({});
   const [loading, setLoading] = useState<boolean>(true);
   const [pagination, setPagination] = useState<any>({});
   const [page, setPage] = useState<number>(1);
@@ -41,19 +41,20 @@ const Orders = () => {
       .then((res) => {
         setOrders(res.data);
         setPagination(res.pagination);
-
+        setStats(res.stats);
         setLoading(false);
       })
       .catch((err) => {
         console.log(err);
         setOrders([]);
         setPagination({});
+        setStats({});
         setLoading(false);
       });
   }, [startDate, endDate, page, filters, searchTerm]);
   return (
     <div className="p-6">
-      <AdminOrderCard data={orders} />
+      <AdminOrderCard stats={stats} />
       <br />
       <Box paddingBlockEnd={"400"}>
         <div className="flex justify-between">

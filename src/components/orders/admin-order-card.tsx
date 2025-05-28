@@ -6,10 +6,10 @@ import {
   XCircleIcon,
 } from "@shopify/polaris-icons";
 import { type ReactNode } from "react";
-import type { ProtectionOrders } from "./type";
 
-const AdminOrderCard = ({ data }: { data: ProtectionOrders }) => {
-  console.log("AdminOrderCard data", data);
+const AdminOrderCard = ({ stats }: { stats: any }) => {
+  console.log("AdminOrderCard data", stats);
+  const { totalOrder, protectedOrder, unprotectedOrder, claimed } = stats || {};
 
   const dashboardCartItems: {
     title: string;
@@ -20,7 +20,7 @@ const AdminOrderCard = ({ data }: { data: ProtectionOrders }) => {
     // TODO: get all order filter [channel= online store and sku= wenexus-shipping-protection] to get actual order
     {
       title: "Total Order",
-      value: data?.length ?? 0,
+      value: totalOrder ?? 0,
       bg: "#ffffff",
       icon: (
         <div className="bg-blue-400 p-3 rounded text-white">
@@ -31,7 +31,7 @@ const AdminOrderCard = ({ data }: { data: ProtectionOrders }) => {
     },
     {
       title: "Protected Order",
-      value: data?.filter((e: any) => e.hasPackageProtection).length ?? 0,
+      value: protectedOrder ?? 0,
       bg: "#cff1cf",
       icon: (
         <div className="bg-green-500 p-3 rounded text-white">
@@ -41,7 +41,7 @@ const AdminOrderCard = ({ data }: { data: ProtectionOrders }) => {
     },
     {
       title: "Unprotected Order",
-      value: data?.filter((e: any) => !e.hasPackageProtection).length ?? 0,
+      value: unprotectedOrder ?? 0,
       bg: "#ffd2e9",
       icon: (
         <div className="bg-red-500 p-3 rounded text-white">
@@ -51,7 +51,7 @@ const AdminOrderCard = ({ data }: { data: ProtectionOrders }) => {
     },
     {
       title: "Claimed",
-      value: data?.filter((e: any) => e.hasClaimRequest).length ?? 0,
+      value: claimed ?? 0,
       bg: "#ffcccc",
       icon: (
         <div className="bg-gray-500 p-3 rounded text-white">
