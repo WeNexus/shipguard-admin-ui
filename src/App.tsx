@@ -1,11 +1,12 @@
 import "./App.css";
+import Dashboard from "./components/dashboard";
 import Layout from "./components/layout";
 
 function App() {
   return (
     <>
       <Layout>
-        <span className="text-2xl">hello world</span>
+        <Dashboard />
       </Layout>
     </>
   );

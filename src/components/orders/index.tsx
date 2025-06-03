@@ -52,6 +52,11 @@ const Orders = () => {
         setLoading(false);
       });
   }, [startDate, endDate, page, filters, searchTerm]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [filters, searchTerm, startDate, endDate]);
+
   return (
     <div className="p-6">
       <AdminOrderCard stats={stats} />

@@ -14,6 +14,9 @@ importers:
       '@shopify/polaris-icons':
         specifier: ^9.3.1
         version: 9.3.1(react@19.1.0)
+      '@shopify/polaris-viz':
+        specifier: ^16.16.0
+        version: 16.16.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@tailwindcss/vite':
         specifier: ^4.1.7
         version: 4.1.7(vite@6.3.5(jiti@2.4.2)(lightningcss@1.30.1))
@@ -398,6 +401,9 @@ packages:
   '@jridgewell/trace-mapping@0.3.25':
     resolution: {integrity: sha512-vNk6aEwybGtawWmy/PzwnGDOjCkLWSD2wqvjGGAgOAwCGWySYXfYoxt00IJkTF+8Lb57DwOb3Aa0o9CApepiYQ==}
 
+  '@juggle/resize-observer@3.4.0':
+    resolution: {integrity: sha512-dfLbk+PwWvFzSxwk3n5ySL0hfBog779o8h68wK/7/APo/7cgyWp5jcXockbxdk5kFRkbeXWm4Fbi9FrdN381sA==}
+
   '@nodelib/fs.scandir@2.1.5':
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
     engines: {node: '>= 8'}
@@ -409,6 +415,33 @@ packages:
   '@nodelib/fs.walk@1.2.8':
     resolution: {integrity: sha512-oGB+UxlgWcgQkgwo8GcEGwemoTFt3FIO9ababBmaGwXIoBKZ+GTy0pP185beGg7Llih/NSHSV2XAs1lnznocSg==}
     engines: {node: '>= 8'}
+
+  '@react-spring/animated@9.7.5':
+    resolution: {integrity: sha512-Tqrwz7pIlsSDITzxoLS3n/v/YCUHQdOIKtOJf4yL6kYVSDTSmVK1LI1Q3M/uu2Sx4X3pIWF3xLUhlsA6SPNTNg==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+
+  '@react-spring/core@9.7.5':
+    resolution: {integrity: sha512-rmEqcxRcu7dWh7MnCcMXLvrf6/SDlSokLaLTxiPlAYi11nN3B5oiCUAblO72o+9z/87j2uzxa2Inm8UbLjXA+w==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+
+  '@react-spring/rafz@9.7.5':
+    resolution: {integrity: sha512-5ZenDQMC48wjUzPAm1EtwQ5Ot3bLIAwwqP2w2owG5KoNdNHpEJV263nGhCeKKmuA3vG2zLLOdu3or6kuDjA6Aw==}
+
+  '@react-spring/shared@9.7.5':
+    resolution: {integrity: sha512-wdtoJrhUeeyD/PP/zo+np2s1Z820Ohr/BbuVYv+3dVLW7WctoiN7std8rISoYoHpUXtbkpesSKuPIw/6U1w1Pw==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+
+  '@react-spring/types@9.7.5':
+    resolution: {integrity: sha512-HVj7LrZ4ReHWBimBvu2SKND3cDVUPWKLqRTmWe/fNY6o1owGOX0cAHbdPDTMelgBlVbrTKrre6lFkhqGZErK/g==}
+
+  '@react-spring/web@9.7.5':
+    resolution: {integrity: sha512-lmvqGwpe+CSttsWNZVr+Dg62adtKhauGwLyGE/RRyZ8AAMLgb9x3NDMA5RMElXo+IMyTkPp7nxTB8ZQlmhb6JQ==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
 
   '@rolldown/pluginutils@1.0.0-beta.9':
     resolution: {integrity: sha512-e9MeMtVWo186sgvFFJOPGy7/d2j2mZhLJIdVW0C/xDluuOvymEATqz6zKsP0ZmXGzQtqlyjz5sC1sYQUoJG98w==}
@@ -522,6 +555,17 @@ packages:
   '@shopify/polaris-tokens@9.4.2':
     resolution: {integrity: sha512-WNoDWLYFj38Cj0FolbNsLaY54JbjuYoO0qsLCj6yBb3Bkg4BEdAjOHji9AktL9IZGPsNhTcMp2/8CfzKtSHg2A==}
     engines: {node: '>=20.10.0'}
+
+  '@shopify/polaris-viz-core@16.16.0':
+    resolution: {integrity: sha512-x4Hi6Z3piq275YWkg37P/6qzrGE1pteaFco1XqGRk1HddMfgAlvUv8YlJa+sYAqaplIAZmmERpR8wPf1KPdnKw==}
+    peerDependencies:
+      react: ^16.14.0 || ^17.0.0 || ^18.0.0
+
+  '@shopify/polaris-viz@16.16.0':
+    resolution: {integrity: sha512-VilUEd/MHcs4E8eraQEmgTE556IPqm5TIip8RdmMQCX6ahmvKdSGLjYRkfGnq5Jxk5BFh4LB+ODOD/GHe2Ky6g==}
+    peerDependencies:
+      react: ^16.14.0 || ^17.0.0 || ^18.0.0
+      react-dom: ^16.14.0 || ^17.0.0 || ^18.0.0
 
   '@shopify/polaris@13.9.5':
     resolution: {integrity: sha512-UN+rT2q1r/uF0Xia8MaCl2nDxatuzbjunS5WYcv4qw8VBvThTxDVURgpwOuvutSrvu138pwScOAah933vqlYkg==}
@@ -819,6 +863,42 @@ packages:
   csstype@3.1.3:
     resolution: {integrity: sha512-M1uQkMl8rQK/szD0LNhtqxIPLpimGm8sOBwU7lLnCpSbTyY3yeU1Vc7l4KT5zT4s/yOxHH5O7tIuuLOCnLADRw==}
 
+  d3-array@3.2.4:
+    resolution: {integrity: sha512-tdQAmyA18i4J7wprpYq8ClcxZy3SC31QMeByyCFyRt7BVHdREQZ5lpzoe5mFEYZUWe+oq8HBvk9JjpibyEV4Jg==}
+    engines: {node: '>=12'}
+
+  d3-color@3.1.0:
+    resolution: {integrity: sha512-zg/chbXyeBtMQ1LbD/WSoW2DpC3I0mpmPdW+ynRTj/x2DAWYrIY7qeZIHidozwV24m4iavr15lNwIwLxRmOxhA==}
+    engines: {node: '>=12'}
+
+  d3-format@3.1.0:
+    resolution: {integrity: sha512-YyUI6AEuY/Wpt8KWLgZHsIU86atmikuoOmCfommt0LYHiQSPjvX2AcFc38PX0CBpr2RCyZhjex+NS/LPOv6YqA==}
+    engines: {node: '>=12'}
+
+  d3-interpolate@3.0.1:
+    resolution: {integrity: sha512-3bYs1rOD33uo8aqJfKP3JWPAibgw8Zm2+L9vBKEHJ2Rg+viTR7o5Mmv5mZcieN+FRYaAOWX5SJATX6k1PWz72g==}
+    engines: {node: '>=12'}
+
+  d3-path@3.1.0:
+    resolution: {integrity: sha512-p3KP5HCf/bvjBSSKuXid6Zqijx7wIfNW+J/maPs+iwR35at5JCbLUT0LzF1cnjbCHWhqzQTIN2Jpe8pRebIEFQ==}
+    engines: {node: '>=12'}
+
+  d3-scale@4.0.2:
+    resolution: {integrity: sha512-GZW464g1SH7ag3Y7hXjf8RoUuAFIqklOAq3MRl4OaWabTFJY9PN/E1YklhXLh+OQ3fM9yS2nOkCoS+WLZ6kvxQ==}
+    engines: {node: '>=12'}
+
+  d3-shape@3.2.0:
+    resolution: {integrity: sha512-SaLBuwGm3MOViRq2ABk3eLoxwZELpH6zhl3FbAoJ7Vm1gofKx6El1Ib5z23NUEhF9AsGl7y+dzLe5Cw2AArGTA==}
+    engines: {node: '>=12'}
+
+  d3-time-format@4.1.0:
+    resolution: {integrity: sha512-dJxPBlzC7NugB2PDLwo9Q8JiTR3M3e4/XANkreKSUxF8vvXKqm1Yfq4Q5dl8budlunRVlUUaDUgFt7eA8D6NLg==}
+    engines: {node: '>=12'}
+
+  d3-time@3.1.0:
+    resolution: {integrity: sha512-VqKjzBLejbSMT4IgbmVgDjpkYrNWUYJnbCGo874u7MMKIWsILRX+OpX/gTk8MqjpT1A/c6HY2dCA77ZN0lkQ2Q==}
+    engines: {node: '>=12'}
+
   debug@4.4.1:
     resolution: {integrity: sha512-KcKCqiftBJcZr++7ykoDIEwSa3XWowTfNPo92BYxjXiyYEVrUQh2aLyhxBCwww+heortUFxEJYcRzosstTEBYQ==}
     engines: {node: '>=6.0'}
@@ -1063,6 +1143,10 @@ packages:
   install@0.13.0:
     resolution: {integrity: sha512-zDml/jzr2PKU9I8J/xyZBQn8rPCAY//UOYNmR01XwNwyfhEWObo2SWfSl1+0tm1u6PhxLwDnfsT/6jB7OUxqFA==}
     engines: {node: '>= 0.10'}
+
+  internmap@2.0.3:
+    resolution: {integrity: sha512-5Hh7Y1wQbvY5ooGgPbDaL5iYLAPzMTUrjMulskHLH6wnv/A+1q5rgEaiuqEjB+oxGXIVZs1FF+R/KPN3ZSQYYg==}
+    engines: {node: '>=12'}
 
   is-extglob@2.1.1:
     resolution: {integrity: sha512-SbKbANkN603Vi4jEZv49LeVJMn4yGwsbzZworEoyEiutsN3nJYdbO36zfhGJ6QEDpOZIFkDtnq5JRxmvl3jsoQ==}
@@ -1490,6 +1574,12 @@ packages:
   uri-js@4.4.1:
     resolution: {integrity: sha512-7rKUyy33Q1yc98pQ1DAmLtwX109F7TIfWlW1Ydo8Wl1ii1SeHieeh0HHfPeL2fMXK6z0s8ecKs9frCuLJvndBg==}
 
+  use-debounce@8.0.2:
+    resolution: {integrity: sha512-4yCQ4FmlmYNpcHXJk1E19chO1X58fH4+QrwKpa5nkx3d7szHR3MjheRgECLvHivp3ClUqEom+SHOGB9zBz+qlw==}
+    engines: {node: '>= 10.0.0'}
+    peerDependencies:
+      react: '>=16.8.0'
+
   vite@6.3.5:
     resolution: {integrity: sha512-cZn6NDFE7wdTpINgs++ZJ4N49W2vRp8LCKrn3Ob1kYNtOo21vfDoaV5GzBfLU4MovSAB8uNRm4jgzVQZ+mBzPQ==}
     engines: {node: ^18.0.0 || ^20.0.0 || >=22.0.0}
@@ -1835,6 +1925,8 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.0
 
+  '@juggle/resize-observer@3.4.0': {}
+
   '@nodelib/fs.scandir@2.1.5':
     dependencies:
       '@nodelib/fs.stat': 2.0.5
@@ -1846,6 +1938,38 @@ snapshots:
     dependencies:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.19.1
+
+  '@react-spring/animated@9.7.5(react@19.1.0)':
+    dependencies:
+      '@react-spring/shared': 9.7.5(react@19.1.0)
+      '@react-spring/types': 9.7.5
+      react: 19.1.0
+
+  '@react-spring/core@9.7.5(react@19.1.0)':
+    dependencies:
+      '@react-spring/animated': 9.7.5(react@19.1.0)
+      '@react-spring/shared': 9.7.5(react@19.1.0)
+      '@react-spring/types': 9.7.5
+      react: 19.1.0
+
+  '@react-spring/rafz@9.7.5': {}
+
+  '@react-spring/shared@9.7.5(react@19.1.0)':
+    dependencies:
+      '@react-spring/rafz': 9.7.5
+      '@react-spring/types': 9.7.5
+      react: 19.1.0
+
+  '@react-spring/types@9.7.5': {}
+
+  '@react-spring/web@9.7.5(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
+    dependencies:
+      '@react-spring/animated': 9.7.5(react@19.1.0)
+      '@react-spring/core': 9.7.5(react@19.1.0)
+      '@react-spring/shared': 9.7.5(react@19.1.0)
+      '@react-spring/types': 9.7.5
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
 
   '@rolldown/pluginutils@1.0.0-beta.9': {}
 
@@ -1916,6 +2040,32 @@ snapshots:
   '@shopify/polaris-tokens@9.4.2':
     dependencies:
       deepmerge: 4.3.1
+
+  '@shopify/polaris-viz-core@16.16.0(react@19.1.0)':
+    dependencies:
+      '@react-spring/animated': 9.7.5(react@19.1.0)
+      '@react-spring/core': 9.7.5(react@19.1.0)
+      d3-array: 3.2.4
+      d3-color: 3.1.0
+      d3-path: 3.1.0
+      d3-scale: 4.0.2
+      d3-shape: 3.2.0
+      react: 19.1.0
+
+  '@shopify/polaris-viz@16.16.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
+    dependencies:
+      '@juggle/resize-observer': 3.4.0
+      '@react-spring/web': 9.7.5(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@shopify/polaris-viz-core': 16.16.0(react@19.1.0)
+      d3-array: 3.2.4
+      d3-color: 3.1.0
+      d3-path: 3.1.0
+      d3-scale: 4.0.2
+      d3-shape: 3.2.0
+      fast-deep-equal: 3.1.3
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
+      use-debounce: 8.0.2(react@19.1.0)
 
   '@shopify/polaris@13.9.5(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
     dependencies:
@@ -2227,6 +2377,40 @@ snapshots:
 
   csstype@3.1.3: {}
 
+  d3-array@3.2.4:
+    dependencies:
+      internmap: 2.0.3
+
+  d3-color@3.1.0: {}
+
+  d3-format@3.1.0: {}
+
+  d3-interpolate@3.0.1:
+    dependencies:
+      d3-color: 3.1.0
+
+  d3-path@3.1.0: {}
+
+  d3-scale@4.0.2:
+    dependencies:
+      d3-array: 3.2.4
+      d3-format: 3.1.0
+      d3-interpolate: 3.0.1
+      d3-time: 3.1.0
+      d3-time-format: 4.1.0
+
+  d3-shape@3.2.0:
+    dependencies:
+      d3-path: 3.1.0
+
+  d3-time-format@4.1.0:
+    dependencies:
+      d3-time: 3.1.0
+
+  d3-time@3.1.0:
+    dependencies:
+      d3-array: 3.2.4
+
   debug@4.4.1:
     dependencies:
       ms: 2.1.3
@@ -2493,6 +2677,8 @@ snapshots:
   imurmurhash@0.1.4: {}
 
   install@0.13.0: {}
+
+  internmap@2.0.3: {}
 
   is-extglob@2.1.1: {}
 
@@ -2863,6 +3049,10 @@ snapshots:
   uri-js@4.4.1:
     dependencies:
       punycode: 2.3.1
+
+  use-debounce@8.0.2(react@19.1.0):
+    dependencies:
+      react: 19.1.0
 
   vite@6.3.5(jiti@2.4.2)(lightningcss@1.30.1):
     dependencies:

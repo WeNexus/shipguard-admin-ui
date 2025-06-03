@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@shopify/polaris";
 import SwitchWithLoading from "../common/switch-with-loading";
 import type { IPackagePackageProtection } from "./type";
@@ -11,8 +11,10 @@ const AppControlCard = ({
   packageProtection: IPackagePackageProtection;
   setReFetch: any;
 }) => {
-  const [loading, setLoading] = React.useState(false);
-  const [autoLoading, setAutoLoading] = React.useState(false);
+  const [loading, setLoading] = useState(false);
+  const [autoLoading, setAutoLoading] = useState(false);
+  const [storeFrontLogLoading, setStoreFrontLogLoading] = useState(false);
+
   const handleWidgetEnable = () => {
     setLoading(true);
     const formData = new FormData();
@@ -73,10 +75,42 @@ const AppControlCard = ({
     // });
   };
 
+  const handleStoreFrontLog = () => {
+    setStoreFrontLogLoading(true);
+    const formData = new FormData();
+    formData.append("storeId", packageProtection.storeId);
+    formData.append("storeFrontLog", packageProtection.storeFrontLog as any);
+    formData.append("action", "storeFrontLog");
+
+    fetch(`${BASE_URL}/admin/api/subscriber`, {
+      method: "POST",
+      body: formData,
+    })
+      .then(async (res) => {
+        const data = await res.json();
+        if (data.success) {
+          setReFetch((prev: boolean) => !prev);
+        } else {
+          console.error(data.error);
+        }
+      })
+      .catch((err) => {
+        console.error("Error updating store status:", err);
+      });
+
+    // fetcher.submit(formData, {
+    //   method: 'POST',
+    //   action: '/admin/subscribers',
+    // });
+  };
+
   useEffect(() => {
     setLoading(false);
     setAutoLoading(false);
+    setStoreFrontLogLoading(false);
   }, [packageProtection]);
+
+  console.log("AppControlCard packageProtection:", packageProtection);
 
   return (
     <div
@@ -102,6 +136,16 @@ const AppControlCard = ({
             switchOn={packageProtection?.insuranceDisplayButton}
             handleSwitch={handleAutoProtection}
             isLoading={autoLoading}
+          />
+        )}
+      </div>
+      <div className="flex justify-between my-3">
+        <span className="text-lg">Store Front Log</span>
+        {packageProtection && (
+          <SwitchWithLoading
+            switchOn={packageProtection?.storeFrontLog}
+            handleSwitch={handleStoreFrontLog}
+            isLoading={storeFrontLogLoading}
           />
         )}
       </div>

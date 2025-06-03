@@ -11,7 +11,6 @@ import useDebounce from "../../hooks/debounce";
 
 const Subscriber = () => {
   const { storeId } = useParams<{ storeId: string }>();
-  console.log("Store ID:", storeId);
   const [reFetch, setReFetch] = useState<boolean>(false);
 
   const [orders, setOrders] = useState<ProtectionOrderList>([]);
@@ -47,6 +46,10 @@ const Subscriber = () => {
         console.error("Error fetching subscriber data:", err);
       });
   }, [storeId, reFetch, page, filters, searchTerm]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [filters, searchTerm]);
 
   return (
     <div className="p-6">
