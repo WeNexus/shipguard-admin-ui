@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { Button } from "@shopify/polaris";
+import { useCallback, useEffect, useState } from "react";
+import { Button, Collapsible, TextField } from "@shopify/polaris";
 import SwitchWithLoading from "../common/switch-with-loading";
 import type { IPackagePackageProtection } from "./type";
 import { BASE_URL } from "../../config";
@@ -14,6 +14,13 @@ const AppControlCard = ({
   const [loading, setLoading] = useState(false);
   const [autoLoading, setAutoLoading] = useState(false);
   const [storeFrontLogLoading, setStoreFrontLogLoading] = useState(false);
+  const [productHideLoading, setProductHideLoading] = useState(false);
+
+  const [hideSelector, setHideSelector] = useState("");
+
+  const [open, setOpen] = useState(false);
+
+  const handleToggle = useCallback(() => setOpen((open) => !open), []);
 
   const handleWidgetEnable = () => {
     setLoading(true);
@@ -37,11 +44,6 @@ const AppControlCard = ({
       .catch((err) => {
         console.error("Error updating store status:", err);
       });
-
-    // fetcher.submit(formData, {
-    //   method: 'POST',
-    //   action: '/admin/subscribers',
-    // });
   };
   const handleAutoProtection = () => {
     setAutoLoading(true);
@@ -68,11 +70,6 @@ const AppControlCard = ({
       .catch((err) => {
         console.error("Error updating store status:", err);
       });
-
-    // fetcher.submit(formData, {
-    //   method: 'POST',
-    //   action: '/admin/subscribers',
-    // });
   };
 
   const handleStoreFrontLog = () => {
@@ -97,20 +94,41 @@ const AppControlCard = ({
       .catch((err) => {
         console.error("Error updating store status:", err);
       });
+  };
 
-    // fetcher.submit(formData, {
-    //   method: 'POST',
-    //   action: '/admin/subscribers',
-    // });
+  const handleProductHide = () => {
+    console.log("Hide Selector:", hideSelector);
+    setProductHideLoading(true);
+    const formData = new FormData();
+    formData.append("storeId", packageProtection.storeId);
+    formData.append("hideSelector", hideSelector as any);
+    formData.append("action", "productHide");
+
+    fetch(`${BASE_URL}/admin/api/subscriber`, {
+      method: "POST",
+      body: formData,
+    })
+      .then(async (res) => {
+        const data = await res.json();
+        if (data.success) {
+          setReFetch((prev: boolean) => !prev);
+          setOpen(false);
+        } else {
+          console.error(data.error);
+        }
+      })
+      .catch((err) => {
+        console.error("Error updating store status:", err);
+      });
   };
 
   useEffect(() => {
     setLoading(false);
     setAutoLoading(false);
+    setProductHideLoading(false);
     setStoreFrontLogLoading(false);
+    setHideSelector(packageProtection?.productHideSelector || "");
   }, [packageProtection]);
-
-  console.log("AppControlCard packageProtection:", packageProtection);
 
   return (
     <div
@@ -149,14 +167,56 @@ const AppControlCard = ({
           />
         )}
       </div>
-      <div className="my-2">
-        <Button size="large" fullWidth>
-          Customize Widget
-        </Button>
+
+      <div className="flex justify-between my-3">
+        <span
+          className="text-lg cursor-pointer"
+          onClick={() => setOpen((p) => !p)}
+        >
+          Hide Product From Store{" "}
+        </span>
+        {packageProtection && (
+          <SwitchWithLoading
+            switchOn={!!hideSelector}
+            handleSwitch={handleToggle}
+            isLoading={false}
+          />
+        )}
       </div>
-      <Button tone="success" variant="primary" size="large" fullWidth>
+
+      <div className="my-2">
+        <Collapsible
+          open={open}
+          id="basic-collapsible"
+          transition={{ duration: "500ms", timingFunction: "ease-in-out" }}
+          expandOnPrint
+        >
+          <TextField
+            label="Search Class Selector"
+            placeholder=".grid-item"
+            helpText={`Enter the CSS class to hide the shipping protection product on your store (e.g., .grid-item).`}
+            autoComplete="off"
+            maxLength={70}
+            showCharacterCount
+            value={hideSelector}
+            onChange={(value) => setHideSelector(value)}
+          />
+          <div className="flex justify-end ">
+            <Button
+              size="slim"
+              variant="primary"
+              onClick={handleProductHide}
+              disabled={!hideSelector}
+              loading={productHideLoading}
+            >
+              Save
+            </Button>
+          </div>
+        </Collapsible>
+      </div>
+      {/* <Button tone="success" variant="primary" size="large" fullWidth>
         Add Custom JavaScript Code
-      </Button>
+      </Button> */}
     </div>
   );
 };

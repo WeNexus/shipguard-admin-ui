@@ -29,7 +29,6 @@ const Subscribers = () => {
         setPagination(res.pagination);
         setStats(res.stats);
         setLoading(false);
-        console.log(res);
       })
       .catch((err) => {
         console.log(err);

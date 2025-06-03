@@ -8,7 +8,6 @@ import {
 import { type ReactNode } from "react";
 
 const AdminOrderCard = ({ stats }: { stats: any }) => {
-  console.log("AdminOrderCard data", stats);
   const { totalOrder, protectedOrder, unprotectedOrder, claimed } = stats || {};
 
   const dashboardCartItems: {

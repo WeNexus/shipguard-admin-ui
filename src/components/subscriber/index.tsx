@@ -33,7 +33,6 @@ const Subscriber = () => {
         setOrders(res.orders);
         setPackageProtection(res.packageProtection);
         setStats(res.stats);
-        console.log("Subscriber data fetched:", res);
         setPagination(res.pagination);
         setLoading(false);
       })
