@@ -20369,7 +20369,7 @@ const $y = ({ setActiveDates: e = () => {} }) => {
     return (
       E.useEffect(() => {
         (async () => {
-          const l = await qy(() => import("./index-BK_hNz2q.js"), []);
+          const l = await qy(() => import("./index-BUAw6o9U.js"), []);
           l && r(l);
         })();
       }, []),
@@ -20428,7 +20428,7 @@ function TA({ lineData: e }) {
   if (
     (E.useEffect(() => {
       (async () => {
-        const s = await qy(() => import("./index-BK_hNz2q.js"), []);
+        const s = await qy(() => import("./index-BUAw6o9U.js"), []);
         s && r(s);
       })();
     }, []),
@@ -21124,7 +21124,7 @@ const OA = ({ stats: e }) => {
       }),
     });
   },
-  Sa = " https://journal-julie-breakdown-strips.trycloudflare.com",
+  Sa = "https://shipguard.app",
   Ho = (e, t) => `${t} ${Number(e).toFixed(2)}`,
   Zy = ({
     orders: e,
