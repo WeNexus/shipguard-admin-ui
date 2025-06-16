@@ -8,8 +8,7 @@ import AdminCard from "./admin-card";
 
 const Dashboard = () => {
   const defaultActiveDates = useMemo(() => default30Days(), []);
-  const [activeDates, setActiveDates] =
-    useState<IActiveDates>(defaultActiveDates);
+  const [, setActiveDates] = useState<IActiveDates>(defaultActiveDates); //activeDates
 
   const lineData = [
     {

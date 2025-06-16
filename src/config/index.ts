@@ -1,4 +1,4 @@
-export const BASE_URL =
-  "https://parameters-mortality-rest-housing.trycloudflare.com";
+// export const BASE_URL =
+//   " https://journal-julie-breakdown-strips.trycloudflare.com";
 
-// export const BASE_URL = "https://shipguard.app";
+export const BASE_URL = "https://shipguard.app";

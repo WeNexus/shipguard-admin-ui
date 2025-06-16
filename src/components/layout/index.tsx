@@ -37,7 +37,7 @@ const Layout = ({ children }: DashboardLayoutProps) => {
       { name: "Integrations", url: "/integration", icon: OrderIcon },
       {
         name: "Activity Log",
-        url: "/wenexus-logs?admin=wenexus-team",
+        url: "/activity-logs",
         icon: OrderIcon,
       },
     ].map((item) => {

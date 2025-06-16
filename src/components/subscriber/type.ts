@@ -56,6 +56,7 @@ export type ProtectionOrderList = ProtectionOrder[];
 export interface IPackagePackageProtection {
   insuranceDisplayButton: boolean;
   productHideSelector: string;
+  productHideSwitch: boolean;
   storeFrontLog: boolean;
   enabled: boolean;
   storeId: string;

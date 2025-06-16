@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, Collapsible, TextField } from "@shopify/polaris";
 import SwitchWithLoading from "../common/switch-with-loading";
 import type { IPackagePackageProtection } from "./type";
@@ -20,7 +20,7 @@ const AppControlCard = ({
 
   const [open, setOpen] = useState(false);
 
-  const handleToggle = useCallback(() => setOpen((open) => !open), []);
+  // const handleToggle = useCallback(() => setOpen((open) => !open), []);
 
   const handleWidgetEnable = () => {
     setLoading(true);
@@ -97,12 +97,15 @@ const AppControlCard = ({
   };
 
   const handleProductHide = () => {
-    console.log("Hide Selector:", hideSelector);
     setProductHideLoading(true);
     const formData = new FormData();
+    formData.append("action", "productHide");
     formData.append("storeId", packageProtection.storeId);
     formData.append("hideSelector", hideSelector as any);
-    formData.append("action", "productHide");
+    formData.append(
+      "productHideSwitch",
+      !packageProtection.productHideSwitch as any
+    );
 
     fetch(`${BASE_URL}/admin/api/subscriber`, {
       method: "POST",
@@ -177,9 +180,9 @@ const AppControlCard = ({
         </span>
         {packageProtection && (
           <SwitchWithLoading
-            switchOn={!!hideSelector}
-            handleSwitch={handleToggle}
-            isLoading={false}
+            switchOn={packageProtection?.productHideSwitch}
+            handleSwitch={handleProductHide}
+            isLoading={productHideLoading}
           />
         )}
       </div>

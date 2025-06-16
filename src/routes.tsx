@@ -5,6 +5,7 @@ import Layout from "./components/layout";
 import Subscribers from "./components/subscribers";
 import Subscriber from "./components/subscriber";
 import Login from "./auth/login";
+import ActivityLogs from "./components/logs";
 
 export const router = createHashRouter([
   {},
@@ -31,6 +32,14 @@ export const router = createHashRouter([
     element: (
       <Layout>
         <Subscriber />
+      </Layout>
+    ),
+  },
+  {
+    path: "activity-logs",
+    element: (
+      <Layout>
+        <ActivityLogs />
       </Layout>
     ),
   },
