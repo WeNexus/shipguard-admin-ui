@@ -6,6 +6,8 @@ import Subscribers from "./components/subscribers";
 import Subscriber from "./components/subscriber";
 import Login from "./auth/login";
 import ActivityLogs from "./components/logs";
+import Settings from "./components/settings";
+import Integrations from "./components/integrations";
 
 export const router = createHashRouter([
   {},
@@ -40,6 +42,22 @@ export const router = createHashRouter([
     element: (
       <Layout>
         <ActivityLogs />
+      </Layout>
+    ),
+  },
+  {
+    path: "settings",
+    element: (
+      <Layout>
+        <Settings />
+      </Layout>
+    ),
+  },
+  {
+    path: "integrations",
+    element: (
+      <Layout>
+        <Integrations />
       </Layout>
     ),
   },

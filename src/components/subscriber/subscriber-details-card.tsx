@@ -30,7 +30,7 @@ const SubscriberDetailsCart = ({
       securedRevenue,
       insuranceEarning,
     } = stats || {};
-    const conversionRate = protectedOrder / totalOrder || 0;
+    const conversionRate = (protectedOrder / totalOrder) * 100 || 0;
     return [
       {
         title: "Total Orders",

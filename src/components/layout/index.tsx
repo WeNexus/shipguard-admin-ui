@@ -34,7 +34,7 @@ const Layout = ({ children }: DashboardLayoutProps) => {
         icon: SettingsIcon,
         // hasDropdown: true,
       },
-      { name: "Integrations", url: "/integration", icon: OrderIcon },
+      { name: "Integrations", url: "/integrations", icon: OrderIcon },
       {
         name: "Activity Log",
         url: "/activity-logs",
