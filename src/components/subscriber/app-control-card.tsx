@@ -13,8 +13,15 @@ const AppControlCard = ({
 }) => {
   const [loading, setLoading] = useState(false);
   const [autoLoading, setAutoLoading] = useState(false);
+
   const [storeFrontLogLoading, setStoreFrontLogLoading] = useState(false);
   const [productHideLoading, setProductHideLoading] = useState(false);
+  const [checkoutWidgetEnableLoading, setCheckoutWidgetEnableLoading] =
+    useState(false);
+  const [
+    checkoutWidgetAutoProtectionLoading,
+    setCheckoutWidgetAutoProtectionLoading,
+  ] = useState(false);
 
   const [hideSelector, setHideSelector] = useState("");
 
@@ -54,6 +61,57 @@ const AppControlCard = ({
       packageProtection.insuranceDisplayButton as any
     );
     formData.append("action", "autoProtection");
+
+    fetch(`${BASE_URL}/admin/api/subscriber`, {
+      method: "POST",
+      body: formData,
+    })
+      .then(async (res) => {
+        const data = await res.json();
+        if (data.success) {
+          setReFetch((prev: boolean) => !prev);
+        } else {
+          console.error(data.error);
+        }
+      })
+      .catch((err) => {
+        console.error("Error updating store status:", err);
+      });
+  };
+
+  const handleCheckoutWidgetEnable = () => {
+    setCheckoutWidgetEnableLoading(true);
+    const formData = new FormData();
+    formData.append("storeId", packageProtection.storeId);
+    formData.append("checkoutEnable", packageProtection.checkoutEnable as any);
+    formData.append("action", "checkoutEnable");
+
+    fetch(`${BASE_URL}/admin/api/subscriber`, {
+      method: "POST",
+      body: formData,
+    })
+      .then(async (res) => {
+        const data = await res.json();
+        if (data.success) {
+          setReFetch((prev: boolean) => !prev);
+        } else {
+          console.error(data.error);
+        }
+      })
+      .catch((err) => {
+        console.error("Error updating store status:", err);
+      });
+  };
+
+  const handleCheckoutAutoProtection = () => {
+    setCheckoutWidgetAutoProtectionLoading(true);
+    const formData = new FormData();
+    formData.append("storeId", packageProtection.storeId);
+    formData.append(
+      "checkoutWidgetButton",
+      packageProtection.checkoutWidgetButton as any
+    );
+    formData.append("action", "checkoutWidgetButton");
 
     fetch(`${BASE_URL}/admin/api/subscriber`, {
       method: "POST",
@@ -130,8 +188,13 @@ const AppControlCard = ({
     setAutoLoading(false);
     setProductHideLoading(false);
     setStoreFrontLogLoading(false);
+    setCheckoutWidgetEnableLoading(false);
+    setCheckoutWidgetAutoProtectionLoading(false);
+
     setHideSelector(packageProtection?.productHideSelector || "");
   }, [packageProtection]);
+
+  console.log(packageProtection);
 
   return (
     <div
@@ -141,7 +204,7 @@ const AppControlCard = ({
       <span className="text-lg font-bold">App Control</span>
 
       <div className="flex justify-between mt-2">
-        <span className="text-lg">Widget Enable</span>
+        <span className="text-lg">Cart Widget Enable</span>
         {packageProtection && (
           <SwitchWithLoading
             switchOn={packageProtection?.enabled}
@@ -151,7 +214,7 @@ const AppControlCard = ({
         )}
       </div>
       <div className="flex justify-between my-3">
-        <span className="text-lg">Auto Protection</span>
+        <span className="text-lg">Cart Auto Protection</span>
         {packageProtection && (
           <SwitchWithLoading
             switchOn={packageProtection?.insuranceDisplayButton}
@@ -160,6 +223,28 @@ const AppControlCard = ({
           />
         )}
       </div>
+
+      <div className="flex justify-between mt-2">
+        <span className="text-lg">Checkout Widget Enable</span>
+        {packageProtection && (
+          <SwitchWithLoading
+            switchOn={packageProtection?.checkoutEnable}
+            handleSwitch={handleCheckoutWidgetEnable}
+            isLoading={checkoutWidgetEnableLoading}
+          />
+        )}
+      </div>
+      <div className="flex justify-between my-3">
+        <span className="text-lg">Checkout Auto Protection</span>
+        {packageProtection && (
+          <SwitchWithLoading
+            switchOn={packageProtection?.checkoutWidgetButton}
+            handleSwitch={handleCheckoutAutoProtection}
+            isLoading={checkoutWidgetAutoProtectionLoading}
+          />
+        )}
+      </div>
+
       <div className="flex justify-between my-3">
         <span className="text-lg">Store Front Log</span>
         {packageProtection && (
