@@ -20369,7 +20369,7 @@ const Yy = ({ setActiveDates: e = () => {} }) => {
     return (
       E.useEffect(() => {
         (async () => {
-          const l = await qy(() => import("./index-Dluo4fzL.js"), []);
+          const l = await qy(() => import("./index-CoE6gPhR.js"), []);
           l && r(l);
         })();
       }, []),
@@ -20428,7 +20428,7 @@ function TA({ lineData: e }) {
   if (
     (E.useEffect(() => {
       (async () => {
-        const s = await qy(() => import("./index-Dluo4fzL.js"), []);
+        const s = await qy(() => import("./index-CoE6gPhR.js"), []);
         s && r(s);
       })();
     }, []),
@@ -21298,7 +21298,9 @@ const OA = ({ stats: e }) => {
                               children: "-",
                             }),
                       }),
-                      O.jsx(Nt.Cell, { children: new Date(k).toDateString() }),
+                      O.jsx(Nt.Cell, {
+                        children: new Date(k).toLocaleString(),
+                      }),
                     ],
                   },
                   w
