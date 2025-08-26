@@ -200,7 +200,7 @@ const SubscriberOrderList = ({
               )}
             </IndexTable.Cell>
             <IndexTable.Cell>
-              {new Date(orderDate).toDateString()}
+              {new Date(orderDate).toLocaleString()}
             </IndexTable.Cell>
           </IndexTable.Row>
         );
