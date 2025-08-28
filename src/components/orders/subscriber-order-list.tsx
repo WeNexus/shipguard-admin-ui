@@ -10,6 +10,7 @@ import type { TabProps } from "@shopify/polaris";
 import { useEffect, useMemo, useState } from "react";
 import { moneyFormater } from "../../utils/money-format";
 import type { ProtectionOrders } from "./type";
+import { DateTime } from "luxon";
 
 const SubscriberOrderList = ({
   orders,
@@ -56,7 +57,8 @@ const SubscriberOrderList = ({
         { title: "Fulfillment status" },
         { title: "Claim status" },
         { title: "Channel" },
-        { title: "Created At" },
+        { title: "Order Date" },
+        { title: "Local Time" },
       ];
     return [
       { title: "Order" },
@@ -66,7 +68,8 @@ const SubscriberOrderList = ({
       { title: "Fulfillment status" },
       { title: "Claim status" },
       { title: "Channel" },
-      { title: "Created At" },
+      { title: "Order Date" },
+      { title: "Local Time" },
     ];
   }, [withStoreName]);
 
@@ -110,6 +113,14 @@ const SubscriberOrderList = ({
           : status?.every((i) => i === "APPROVE")
           ? "Approved"
           : "Processing";
+
+        const formattedTime = DateTime.fromJSDate(new Date(orderDate), {
+          zone: Store.timezoneId,
+        }).toFormat("ff");
+        const localTime = DateTime.fromJSDate(new Date(orderDate)).toFormat(
+          "ff"
+        );
+
         return (
           <IndexTable.Row id={id.toString()} key={id} position={index}>
             <IndexTable.Cell>
@@ -203,9 +214,8 @@ const SubscriberOrderList = ({
               )}
             </IndexTable.Cell>
             <IndexTable.Cell>{channelName ?? "-"}</IndexTable.Cell>
-            <IndexTable.Cell>
-              {new Date(orderDate).toLocaleString()}
-            </IndexTable.Cell>
+            <IndexTable.Cell>{formattedTime}</IndexTable.Cell>
+            <IndexTable.Cell>{localTime}</IndexTable.Cell>
           </IndexTable.Row>
         );
       }

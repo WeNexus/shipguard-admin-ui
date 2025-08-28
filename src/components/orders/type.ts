@@ -3,6 +3,7 @@ interface StoreInfo {
   name: string;
   moneyFormat: string;
   currencyCode: string;
+  timezoneId: string;
 }
 
 // Nested claim order entries

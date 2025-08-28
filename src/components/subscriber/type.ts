@@ -3,6 +3,7 @@ export interface StoreInfo {
   name: string;
   moneyFormat: string; // e.g. "${{amount}}"
   currencyCode: string; // e.g. "USD", "BDT"
+  timezoneId: string; // e.g. "America/New_York"
 }
 
 // Nested claim order (only present when hasClaimRequest is true)
