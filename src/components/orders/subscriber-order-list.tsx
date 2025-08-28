@@ -55,6 +55,7 @@ const SubscriberOrderList = ({
         { title: "Order Status" },
         { title: "Fulfillment status" },
         { title: "Claim status" },
+        { title: "Channel" },
         { title: "Created At" },
       ];
     return [
@@ -64,6 +65,7 @@ const SubscriberOrderList = ({
       { title: "Order Status" },
       { title: "Fulfillment status" },
       { title: "Claim status" },
+      { title: "Channel" },
       { title: "Created At" },
     ];
   }, [withStoreName]);
@@ -84,6 +86,7 @@ const SubscriberOrderList = ({
         {
           id,
           orderName,
+          channelName,
           protectionFee,
           orderAmount,
           fulfillmentStatus,
@@ -199,6 +202,7 @@ const SubscriberOrderList = ({
                 </Text>
               )}
             </IndexTable.Cell>
+            <IndexTable.Cell>{channelName ?? "-"}</IndexTable.Cell>
             <IndexTable.Cell>
               {new Date(orderDate).toLocaleString()}
             </IndexTable.Cell>

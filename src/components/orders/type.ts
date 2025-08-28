@@ -45,6 +45,7 @@ export interface ProtectionOrder {
   updatedAt: string; // ISO timestamp
   claimDate: string | null; // ISO timestamp or null
   orderDate: string; // ISO timestamp
+  channelName: string | null;
 
   PackageProtectionClaimOrder: PackageProtectionClaimOrder[];
   Store: StoreInfo;
