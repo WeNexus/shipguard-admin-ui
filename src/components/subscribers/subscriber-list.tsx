@@ -201,7 +201,9 @@ const SubscriberList = ({
         filters={[]}
         onClearAll={() => setQueryValue("")}
         cancelAction={{
-          onAction: () => {},
+          onAction: () => {
+            setQueryValue("");
+          },
           disabled: false,
           loading: false,
         }}
