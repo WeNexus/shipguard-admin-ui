@@ -8,6 +8,7 @@ import Login from "./auth/login";
 import ActivityLogs from "./components/logs";
 import Settings from "./components/settings";
 import Integrations from "./components/integrations";
+import Review from "./components/review";
 
 export const router = createHashRouter([
   {},
@@ -58,6 +59,14 @@ export const router = createHashRouter([
     element: (
       <Layout>
         <Integrations />
+      </Layout>
+    ),
+  },
+  {
+    path: "review",
+    element: (
+      <Layout>
+        <Review />
       </Layout>
     ),
   },
