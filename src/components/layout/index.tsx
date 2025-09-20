@@ -6,6 +6,7 @@ import {
   OrderIcon,
   PackageIcon,
   SettingsIcon,
+  StarIcon
 } from "@shopify/polaris-icons";
 import Sidebar from "./sidebar";
 import TopBar from "./topbar";
@@ -39,6 +40,11 @@ const Layout = ({ children }: DashboardLayoutProps) => {
         name: "Activity Log",
         url: "/activity-logs",
         icon: OrderIcon,
+      },
+      {
+        name: "Review Stats",
+        url: "/review",
+        icon: StarIcon,
       },
     ].map((item) => {
       const isClaimsRoute = /^\/subscribers\/[^/]+$/.test(location.pathname);
