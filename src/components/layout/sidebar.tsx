@@ -4,7 +4,7 @@ import { EnterIcon, ProfileIcon, XIcon } from "@shopify/polaris-icons";
 import { Link } from "react-router";
 
 const ShipGuardLogo =
-  "https://shipguard.nyc3.cdn.digitaloceanspaces.com/ShipGuard%20Widget%20Assets/app-logo/Inhouse%20Shipping%20Protection.png";
+  "https://shipguard.nyc3.cdn.digitaloceanspaces.com/ShipGuard-Widget-Assets/app-logo/Inhouse-Shipping-Protection.png";
 
 const Sidebar = ({ isOpen, setIsOpen, navItems }: SidebarProps) => {
   return (
