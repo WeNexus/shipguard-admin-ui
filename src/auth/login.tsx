@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import appLogo from "../assets/Shipguard-shipping-protection.png";
-import googleLogo from "../assets/Logo-google-icon-PNG.png";
 import { BASE_URL } from "../config";
+const googleLogo = "https://shipguard.nyc3.cdn.digitaloceanspaces.com/ShipGuard-Widget-Assets/assets/Logo-google-icon-PNG.png";
+const appLogo = 'https://shipguard.nyc3.cdn.digitaloceanspaces.com/ShipGuard-Widget-Assets/app-logo/Inhouse-Shipping-Protection.png'
+
 const Login = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);

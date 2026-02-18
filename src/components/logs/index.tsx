@@ -13,6 +13,7 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import useDebounce from "../../hooks/debounce";
 import { BASE_URL } from "../../config";
+import {TooltipCustom } from "./tooltip.tsx";
 
 const ActivityLogs = () => {
   const [data, setData] = useState<Record<any, any>[]>([]);
@@ -86,6 +87,16 @@ const ActivityLogs = () => {
       data?.map(
         ({ id, type, logFrom, message, createdAt, domain, shop }, index) => {
           const date = new Date(createdAt).toLocaleString();
+
+          /**
+           * Bug Fix:
+           * - Database now stores data as pure JSON (previously it was double-stringified).
+           * - This component now supports both formats and will not throw errors.
+           */
+          if(typeof message !== "string") {
+            message = JSON.stringify(message)
+          }
+
           return (
             <IndexTable.Row id={id.toString()} key={id} position={index}>
               <IndexTable.Cell>
@@ -120,7 +131,18 @@ const ActivityLogs = () => {
                 </span>
               </IndexTable.Cell>
 
-              <IndexTable.Cell>{message as string}</IndexTable.Cell>
+              <IndexTable.Cell>
+                <div style={{cursor: "pointer"}}>
+                  <TooltipCustom
+                    text={message as string}
+                    delay={400}
+                  >
+                    {truncate(message as string, 100)}...
+                  </TooltipCustom>
+                </div>
+
+
+              </IndexTable.Cell>
               <IndexTable.Cell>{date}</IndexTable.Cell>
             </IndexTable.Row>
           );
@@ -209,5 +231,12 @@ const ActivityLogs = () => {
     </div>
   );
 };
+
+function truncate(str:string, maxLength:number) {
+  return str.length > maxLength
+    ? str.slice(0, maxLength)
+    : str;
+}
+
 
 export default ActivityLogs;
