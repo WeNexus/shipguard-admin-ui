@@ -15,6 +15,7 @@ const Subscriber = () => {
 
   const [orders, setOrders] = useState<ProtectionOrderList>([]);
   const [stats, setStats] = useState<any>({});
+  const [store, setStore] = useState<any>({});
   const [loading, setLoading] = useState<boolean>(true);
   const [pagination, setPagination] = useState<any>({});
   const [page, setPage] = useState<number>(1);
@@ -30,6 +31,7 @@ const Subscriber = () => {
     )
       .then((res) => res.json())
       .then((res) => {
+        setStore(res.store)
         setOrders(res.orders);
         setPackageProtection(res.packageProtection);
         setStats(res.stats);
@@ -88,6 +90,7 @@ const Subscriber = () => {
           <AppControlCard
             packageProtection={packageProtection}
             setReFetch={setReFetch}
+            store={store}
           />
         </div>
       </div>
