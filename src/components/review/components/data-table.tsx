@@ -1,12 +1,12 @@
-import {DataTable, Card} from '@shopify/polaris';
-import type {StateData, ReviewProps} from "../index.tsx";
-import {useMemo} from "react";
+import { DataTable, Card, Button } from '@shopify/polaris';
+import type { StateData, ReviewProps } from "../index.tsx";
+import { useMemo } from "react";
 import type { UseStateData } from "../hooks/use-state-data.ts";
-import {BASE_URL} from "../../../config";
+import { BASE_URL } from "../../../config";
 
-export function ReviewStatisticsData({formState}: {formState:UseStateData<StateData>}) {
+export function ReviewStatisticsData({ formState }: { formState: UseStateData<StateData> }) {
 
-  const row = prepareData(formState.state.reviewData);
+  const row = prepareData(formState.state.reviewData, formState);
 
   const paginationInfo = useMemo(() => {
     const totalPage = formState?.state?.reviewData?.totalPage;
@@ -14,40 +14,40 @@ export function ReviewStatisticsData({formState}: {formState:UseStateData<StateD
     const hasNext = !!(totalPage && totalPage > currentPage);
     const hasPrevious = currentPage !== 1;
 
-    const pagination:Record<string, any> = {
+    const pagination: Record<string, any> = {
 
     }
 
-    if(hasNext) {
+    if (hasNext) {
       pagination.hasNext = true;
-      pagination.onNext= () =>{
-        fetch(BASE_URL + `/admin/api/review?page=${currentPage+1}`).then(res => res.json())
+      pagination.onNext = () => {
+        fetch(BASE_URL + `/admin/api/review?page=${currentPage + 1}`).then(res => res.json())
           .then(res => {
             formState.addChange({
               reviewData: res,
-              currentPage: currentPage+1
+              currentPage: currentPage + 1
             })
           })
       }
     } else {
       pagination.hasNext = false;
-      pagination.onNext = () =>{}
+      pagination.onNext = () => { }
     }
 
-    if(hasPrevious) {
+    if (hasPrevious) {
       pagination.hasPrevious = true;
-      pagination.onPrevious = () =>{
-        fetch(BASE_URL + `/admin/api/review?page=${currentPage-1}`).then(res => res.json())
+      pagination.onPrevious = () => {
+        fetch(BASE_URL + `/admin/api/review?page=${currentPage - 1}`).then(res => res.json())
           .then(res => {
             formState.addChange({
               reviewData: res,
-              currentPage: currentPage-1
+              currentPage: currentPage - 1
             })
           })
       }
     } else {
       pagination.hasPrevious = false;
-      pagination.onPrevious = () =>{}
+      pagination.onPrevious = () => { }
     }
 
     return pagination;
@@ -63,6 +63,7 @@ export function ReviewStatisticsData({formState}: {formState:UseStateData<StateD
           'numeric',
           'numeric',
           'numeric',
+          "numeric"
         ]}
         headings={[
           'Store',
@@ -70,7 +71,8 @@ export function ReviewStatisticsData({formState}: {formState:UseStateData<StateD
           'Initial Banner Review',
           'Banner Clicked',
           'Last Showed At',
-          "Feedback Message"
+          "Feedback Message",
+          "Action"
         ]}
         rows={row}
         pagination={{
@@ -82,14 +84,14 @@ export function ReviewStatisticsData({formState}: {formState:UseStateData<StateD
   );
 }
 
-const prepareData = (data: ReviewProps) => {
+const prepareData = (data: ReviewProps, formState: UseStateData<StateData>) => {
 
   const reviewData = useMemo(() => {
-    if(data) return data.data;
+    if (data) return data.data;
     else return []
-  },[data])
+  }, [data])
 
-  if(!data) return [];
+  if (!data) return [];
 
   return reviewData.map((review) => {
     const row = [];
@@ -99,11 +101,21 @@ const prepareData = (data: ReviewProps) => {
     row.push(review?.initialBannerReview || "N/A");
     row.push(review?.firstBannerClickCount || "N/A");
 
-    if(review?.lastShowedAt) {
+    if (review?.lastShowedAt) {
       const localDate = new Date(review?.lastShowedAt);
       row.push(`${localDate.toLocaleDateString()} ${localDate.toLocaleTimeString()}`);
     }
     row.push(review?.feedbackMessage || "N/A");
+    row.push(
+      <Button
+        onClick={() => {
+         formState.addChange({ storeId: review.storeId })
+         formState.addChange({showModal: true})
+        }}
+      >
+        Details
+      </Button>
+    )
     return row;
   })
 }
