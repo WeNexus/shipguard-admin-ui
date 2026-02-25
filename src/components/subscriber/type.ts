@@ -62,6 +62,11 @@ export interface IPackagePackageProtection {
   productHideSwitch: boolean;
   checkoutEnable: boolean;
   storeFrontLog: boolean;
+  defaultSetting: boolean;
+  cssSelector: string;
+  position: "BEFORE" | "AFTER";
+
+
 
   enabled: boolean;
   storeId: string;
