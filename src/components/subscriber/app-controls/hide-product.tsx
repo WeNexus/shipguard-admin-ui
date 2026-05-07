@@ -19,12 +19,12 @@ const HideProduct = ({
     setLoading(true);
     const formData = new FormData();
     formData.append("action", "productHide");
-    formData.append("storeId", packageProtection.storeId);
+    formData.append("storeId", packageProtection?.storeId);
     formData.append("hideSelector", hideSelector as any);
     if (switchClick) {
       formData.append(
         "productHideSwitch",
-        !packageProtection.productHideSwitch as any,
+        !packageProtection?.productHideSwitch || false as any,
       );
     }
 
@@ -49,7 +49,7 @@ const HideProduct = ({
   };
 
   useEffect(() => {
-    setHideSelector(packageProtection.productHideSelector || "");
+    setHideSelector(packageProtection?.productHideSelector || "");
   }, [packageProtection]);
 
   return (

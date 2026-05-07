@@ -14,10 +14,10 @@ const CustomWidgetSelector = ({
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [cssSelector, setCssSelector] = useState(
-    packageProtection.cssSelector || " ",
+    packageProtection?.cssSelector || " ",
   );
   const [position, setPosition] = useState<"BEFORE" | "AFTER">(
-    packageProtection.position || "BEFORE",
+    packageProtection?.position || "BEFORE",
   );
 
   const handleCustomWidgetSelector = (switchClick = false) => {
@@ -30,7 +30,7 @@ const CustomWidgetSelector = ({
     if (switchClick) {
       formData.append(
         "customSelector",
-        !packageProtection.defaultSetting as any,
+        !packageProtection?.defaultSetting || false as any,
       );
     }
 
@@ -54,8 +54,8 @@ const CustomWidgetSelector = ({
   };
 
   useEffect(() => {
-    setCssSelector(packageProtection.cssSelector || " ");
-    setPosition(packageProtection.position || "BEFORE");
+    setCssSelector(packageProtection?.cssSelector || " ");
+    setPosition(packageProtection?.position || "BEFORE");
   }, [packageProtection]);
   return (
     <>
@@ -89,7 +89,7 @@ const CustomWidgetSelector = ({
             autoComplete="off"
             maxLength={70}
             showCharacterCount
-            value={cssSelector}
+            value={cssSelector || ""}
             onChange={(value) => setCssSelector(value)}
           />
           <br />
@@ -109,7 +109,7 @@ const CustomWidgetSelector = ({
               size="slim"
               variant="primary"
               onClick={() => handleCustomWidgetSelector(false)}
-              disabled={!cssSelector}
+              disabled={!cssSelector || false}
               loading={loading}
             >
               Save

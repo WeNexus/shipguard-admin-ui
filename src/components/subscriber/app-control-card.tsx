@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react";
-import { Button } from "@shopify/polaris";
+import {Button, ButtonGroup} from "@shopify/polaris";
 import SwitchWithLoading from "../common/switch-with-loading";
 import type { IPackagePackageProtection } from "./type";
 import { BASE_URL } from "../../config";
 import CustomWidgetSelector from "./app-controls/custom-widget-selector";
 import HideProduct from "./app-controls/hide-product";
 import Suspend from "./app-controls/suspend";
+import Subscription from "./app-controls/subscription";
+
+type AppControlTab = "basic" | "subscription";
 
 const AppControlCard = ({
   packageProtection,
@@ -16,6 +19,8 @@ const AppControlCard = ({
   setReFetch: any;
   store: any;
 }) => {
+  const [selectedTab, setSelectedTab] = useState<AppControlTab>("basic");
+
   const [loading, setLoading] = useState(false);
   const [autoLoading, setAutoLoading] = useState(false);
 
@@ -186,8 +191,28 @@ const AppControlCard = ({
       className=" rounded-lg shadow-sm p-4 h-full"
       style={{ backgroundColor: "#b6d6ff" }}
     >
-      <span className="text-lg font-bold">App Control</span>
+      <div className={'flex justify-between'}>
+        <span className="text-lg font-bold">App Control</span>
 
+        <ButtonGroup variant={'segmented'}>
+          <Button
+            pressed={selectedTab === "basic"}
+            onClick={() => setSelectedTab("basic")}
+          >
+            Basic
+          </Button>
+
+          <Button
+            pressed={selectedTab === "subscription"}
+            onClick={() => setSelectedTab("subscription")}
+          >
+            Subscription
+          </Button>
+        </ButtonGroup>
+      </div>
+
+      {selectedTab === "basic" && (
+      <>
       <div className="flex justify-between mt-2">
         <span className="text-lg">Cart Widget Enable</span>
         {packageProtection && (
@@ -269,6 +294,16 @@ const AppControlCard = ({
           {store?.uninstalledAt ? "Uninstalled" : "Uninstall app"}
         </Button>
       </div>
+      </>
+      )}
+
+      {selectedTab === "subscription" && (
+        <Subscription
+          packageProtection={packageProtection}
+          store={store}
+          setReFetch={setReFetch}
+        />
+      )}
     </div>
   );
 };
