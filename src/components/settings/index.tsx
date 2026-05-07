@@ -32,8 +32,8 @@ const Settings = () => {
         if (!res.ok) throw new Error("Failed to load");
         const json = await res.json();
         setData({
-          showFounderToMerchant: json.showFounderToMerchant,
-          newUserSubscriptionPlan: json.newUserSubscriptionPlan,
+          showFounderToMerchant: json.data.showFounderToMerchant,
+          newUserSubscriptionPlan: json.data.newUserSubscriptionPlan,
         });
       })
       .catch(() => {
