@@ -31,6 +31,7 @@ const Subscription = ({
     storeSubscriptionType: "Free",
   });
 
+  /* load initial data */
   useEffect(() => {
     const controller = new AbortController();
 
@@ -46,8 +47,6 @@ const Subscription = ({
           { method: "GET", signal: controller.signal },
         );
         const json = await res.json();
-
-        console.log("data", json);
 
         const apiStatus = json?.statusCode;
         const apiOk =
@@ -154,6 +153,7 @@ const Subscription = ({
           <div className="mt-2 p-3 rounded-md bg-white/60">
             <p className="text-sm font-medium mb-2">Pricing Group</p>
             {loading ? (
+              /* show skeleton while loading */
               <div className="animate-pulse">
                 <div className="flex gap-4">
                   <div className="h-5 w-20 bg-gray-300 rounded" />
@@ -190,6 +190,10 @@ const Subscription = ({
                         {
                           label: "Usage (Monthly with usage fee)",
                           value: "Usage",
+                        },
+                        {
+                          label: "Pas As You Go Only",
+                          value: "PayAsYouGoOnly",
                         },
                       ]}
                       value={state.storeSubscriptionType}
