@@ -1,3 +1,10 @@
+# Both @tailwindcss/oxide and esbuild download native binaries in postinstall,
+# so their build scripts must be approved or the build fails.
+# pnpm 11+ (used by the DigitalOcean builder) reads `allowBuilds`;
+# `onlyBuiltDependencies` is kept for pnpm 10, which does not know `allowBuilds`.
+allowBuilds:
+  '@tailwindcss/oxide': true
+  esbuild: true
 onlyBuiltDependencies:
   - '@tailwindcss/oxide'
   - esbuild
