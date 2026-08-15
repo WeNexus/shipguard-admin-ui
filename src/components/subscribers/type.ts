@@ -4,9 +4,12 @@ interface Country {
   name: string;
 }
 
-// Timezone wrapper
+// Timezone wrapper.
+// The new backend flattened the old Country/Timezone tables onto `Store.country`, and a store with
+// no synced Shopify profile has none — so `Country` is genuinely nullable. Typed that way so callers
+// are forced to guard instead of discovering it as a render-time TypeError.
 interface Timezone {
-  Country: Country;
+  Country: Country | null;
 }
 
 // Package protection settings
@@ -33,7 +36,7 @@ export interface StoreRecord {
   uninstalledAt: string | null; // ISO timestamp or null
   currencyCode: string; // e.g. "USD", "BDT"
   PackageProtection: PackageProtection;
-  Timezone: Timezone;
+  Timezone?: Timezone | null;
   PackageProtectionOrders: PackageProtectionOrderSummary[];
 }
 

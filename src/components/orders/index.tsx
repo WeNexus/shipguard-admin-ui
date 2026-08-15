@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import DateRangePicker from "../common/date-range-picker";
 import type { IActiveDates } from "../layout/type";
 import { default30Days } from "../../utils/default30Days";
-import { BASE_URL } from "../../config";
+import { apiFetch } from "../../lib/api-client";
 import SubscriberOrderList from "./subscriber-order-list";
 import useDebounce from "../../hooks/debounce";
 
@@ -34,10 +34,9 @@ const Orders = () => {
 
   useEffect(() => {
     setLoading(true);
-    fetch(
-      `${BASE_URL}/admin/api/orders?startDate=${startDate}&endDate=${endDate}&page=${page}&limit=50&filter=${filters}&searchTerm=${searchTerm}`
-    )
-      .then((res) => res.json())
+    apiFetch("admin/api/orders", {
+      query: { startDate, endDate, page, limit: 50, filter: filters, searchTerm },
+    })
       .then((res) => {
         setOrders(res.data);
         setPagination(res.pagination);

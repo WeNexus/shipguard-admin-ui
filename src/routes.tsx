@@ -31,7 +31,8 @@ export const router = createHashRouter([
     ),
   },
   {
-    path: "subscribers/:storeId",
+    // The param is the store DOMAIN (list rows link with `to={store.domain}`), named honestly.
+    path: "subscribers/:domain",
     element: (
       <Layout>
         <Subscriber />

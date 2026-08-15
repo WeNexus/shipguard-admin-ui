@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import { BASE_URL } from "../config";
+import { apiFetch, ApiError } from "../lib/api-client";
+// aliased: this component already has a local `setEmail` state setter for the input field.
+import { setEmail as persistEmail, setToken } from "../lib/auth-storage";
 const googleLogo = "https://shipguard.nyc3.cdn.digitaloceanspaces.com/ShipGuard-Widget-Assets/assets/Logo-google-icon-PNG.png";
 const appLogo = 'https://shipguard.nyc3.cdn.digitaloceanspaces.com/ShipGuard-Widget-Assets/app-logo/Inhouse-Shipping-Protection.png'
 
@@ -12,30 +14,44 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handleSubmit = (e: any) => {
-    setLoading(true);
+  type LoginResponse = {
+    success: string;
+    redirect: boolean;
+    email: string;
+    token: string;
+    expiresIn: string;
+  };
+
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
+    setLoading(true);
+    setError("");
+
     const formData = new FormData();
     formData.append("email", email);
     formData.append("password", password);
 
-    fetch(`${BASE_URL}/admin/api`, {
-      method: "POST",
-      body: formData,
-    })
-      .then(async (res) => {
-        const data = await res.json();
-        setLoading(false);
-        if (data.redirect) {
-          localStorage.setItem("userEmail", data.email);
-          navigate("/");
-        }
-      })
-      .catch((err) => {
-        console.error(err);
-        setError("Login failed. Please check your credentials.");
-        setLoading(false);
+    try {
+      const data = await apiFetch<LoginResponse>("admin/api/login", {
+        method: "POST",
+        body: formData,
       });
+
+      // The token is what the backend actually trusts; the email is only for display.
+      setToken(data.token);
+      persistEmail(data.email);
+      navigate("/");
+    } catch (err) {
+      // The backend returns a real 401 with a deliberately generic message (it never reveals
+      // whether the email or the password was wrong), plus 429 once the login rate limit trips.
+      if (err instanceof ApiError && err.status === 429) {
+        setError("Too many attempts. Please wait a few minutes and try again.");
+      } else {
+        setError("Login failed. Please check your credentials.");
+      }
+    } finally {
+      setLoading(false);
+    }
   };
   return (
     <div className="min-h-screen flex flex-col md:flex-row">

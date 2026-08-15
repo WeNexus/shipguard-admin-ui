@@ -8,14 +8,14 @@ import {
   Toast,
 } from "@shopify/polaris";
 import { useEffect, useState } from "react";
-import { BASE_URL } from "../../config";
+import { apiFetch } from "../../lib/api-client";
 
 type SettingsData = {
   showFounderToMerchant: boolean;
   newUserSubscriptionPlan: "Free" | "Monthly" | "Usage";
 };
 
-const API_URL = `${BASE_URL}/admin/api/global-settings/subscription-config`;
+const SETTINGS_PATH = "admin/api/global-settings/subscription-config";
 
 const Settings = () => {
   const [data, setData] = useState<SettingsData | null>(null);
@@ -27,10 +27,8 @@ const Settings = () => {
   useEffect(() => {
     setLoading(true);
     setLoadError(false);
-    fetch(API_URL)
-      .then(async (res) => {
-        if (!res.ok) throw new Error("Failed to load");
-        const json = await res.json();
+    apiFetch(SETTINGS_PATH)
+      .then((json) => {
         setData({
           showFounderToMerchant: json.data.showFounderToMerchant,
           newUserSubscriptionPlan: json.data.newUserSubscriptionPlan,
@@ -48,15 +46,9 @@ const Settings = () => {
   const handleSave = () => {
     if (!data) return;
     setSaving(true);
-    fetch(API_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    })
-      .then(async (res) => {
-        const data = await res.json();
-        console.log(data);
-        if (!res.ok) throw new Error("Save failed");
+    apiFetch(SETTINGS_PATH, { method: "POST", body: data })
+      .then(() => {
+        setToastMessage("Settings saved");
       })
       .catch(() => {
         setToastMessage("Something went wrong");

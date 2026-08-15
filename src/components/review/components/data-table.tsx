@@ -2,7 +2,7 @@ import { DataTable, Card, Button } from '@shopify/polaris';
 import type { StateData, ReviewProps } from "../index.tsx";
 import { useMemo } from "react";
 import type { UseStateData } from "../hooks/use-state-data.ts";
-import { BASE_URL } from "../../../config";
+import { apiFetch } from "../../../lib/api-client";
 
 export function ReviewStatisticsData({ formState }: { formState: UseStateData<StateData> }) {
 
@@ -21,7 +21,7 @@ export function ReviewStatisticsData({ formState }: { formState: UseStateData<St
     if (hasNext) {
       pagination.hasNext = true;
       pagination.onNext = () => {
-        fetch(BASE_URL + `/admin/api/review?page=${currentPage + 1}`).then(res => res.json())
+        apiFetch("admin/api/review", { query: { page: currentPage + 1 } })
           .then(res => {
             formState.addChange({
               reviewData: res,
@@ -37,7 +37,7 @@ export function ReviewStatisticsData({ formState }: { formState: UseStateData<St
     if (hasPrevious) {
       pagination.hasPrevious = true;
       pagination.onPrevious = () => {
-        fetch(BASE_URL + `/admin/api/review?page=${currentPage - 1}`).then(res => res.json())
+        apiFetch("admin/api/review", { query: { page: currentPage - 1 } })
           .then(res => {
             formState.addChange({
               reviewData: res,

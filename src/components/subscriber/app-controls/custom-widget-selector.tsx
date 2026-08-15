@@ -1,7 +1,7 @@
 import { Button, Collapsible, Select, TextField } from "@shopify/polaris";
 import SwitchWithLoading from "../../common/switch-with-loading";
 import { useEffect, useState } from "react";
-import { BASE_URL } from "../../../config";
+import { apiFetch } from "../../../lib/api-client";
 import type { IPackagePackageProtection } from "../type";
 
 const CustomWidgetSelector = ({
@@ -34,12 +34,8 @@ const CustomWidgetSelector = ({
       );
     }
 
-    fetch(`${BASE_URL}/admin/api/subscriber`, {
-      method: "POST",
-      body: formData,
-    })
-      .then(async (res) => {
-        const data = await res.json();
+    apiFetch("admin/api/subscriber", { method: "POST", body: formData })
+      .then((data) => {
         if (data.success) {
           setReFetch((prev: boolean) => !prev);
         } else {

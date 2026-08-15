@@ -12,7 +12,7 @@ import {
 } from "@shopify/polaris";
 import { useEffect, useMemo, useState } from "react";
 import useDebounce from "../../hooks/debounce";
-import { BASE_URL } from "../../config";
+import { apiFetch } from "../../lib/api-client";
 import {TooltipCustom } from "./tooltip.tsx";
 
 const ActivityLogs = () => {
@@ -49,11 +49,13 @@ const ActivityLogs = () => {
 
     const fetchData = () => {
       setLoading(true);
-      fetch(
-        `${BASE_URL}/admin/api/logs?page=${page}&limit=50&filterItems=${filterItems}&searchTerm=${searchTerm}`,
-        { signal: abortController.signal }
-      )
-        .then((res) => res.json())
+      apiFetch("admin/api/logs", {
+        query: { page, limit: 50, filterItems, searchTerm },
+        signal: abortController.signal,
+        // This runs on a 60s timer, so a token expiry must not navigate away from whatever the admin
+        // is doing. The 401 still clears auth; the next click redirects.
+        background: true,
+      })
         .then((res) => {
           setData(res.widgetLog);
           setPagination(res.pagination);
@@ -176,7 +178,7 @@ const ActivityLogs = () => {
           setMode={setMode}
           filters={[]}
           queryValue={queryValue}
-          queryPlaceholder="Searching in all"
+          queryPlaceholder="Search by store domain"
           onQueryChange={(e) => setQueryValue(e)}
           onClearAll={() => console.log}
           tabs={tabs}

@@ -12,6 +12,12 @@ dist
 dist-ssr
 *.local
 
+# Env: `.env.development` / `.env.production` ARE committed on purpose — every VITE_* var
+# is public (inlined into the bundle), so they hold no secrets. Only machine-specific
+# overrides are ignored, which `*.local` above already covers.
+.env
+.env.local
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
@@ -23,3 +29,11 @@ dist-ssr
 *.sln
 *.sw?
 config.bat
+
+# Never commit build/source archives — a 6.4 MB `Shipguard-admin.zip` (a redundant snapshot of this
+# repo's own src/, referenced by nothing) was tracked here until Plan 29. Note that removing it from
+# HEAD does NOT shrink the clone: the blob stays in history and only a rewrite (git filter-repo/BFG)
+# would reclaim it — that is destructive and needs coordination, so it was left alone deliberately.
+*.zip
+*.tar
+*.tar.gz

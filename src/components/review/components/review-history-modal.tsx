@@ -7,7 +7,7 @@ import {
 import { useEffect, useState, useMemo } from 'react';
 import type { UseStateData } from '../hooks/use-state-data';
 import type { StateData } from '..';
-import { BASE_URL } from '../../../config';
+import { apiFetch } from '../../../lib/api-client';
 import { Scrollable } from '@shopify/polaris';
 
 interface ApiResponse {
@@ -16,29 +16,39 @@ interface ApiResponse {
   initialBannerReview?: number
   feedbackMessage?: string
   activitySummary?: string
-  historyCreatedAt: string
+  historyCreatedAt: string | null
 }
 
 export function ReviewHistoryModal({ formState }: { formState: UseStateData<StateData> }) {
   const [data, setData] = useState<ApiResponse[]>([]);
   const [modalLoading, setModalLoading] = useState<boolean>(true)
+  const [loadError, setLoadError] = useState<string | null>(null)
 
   useEffect(() => {
     const invalidStoreId = !formState.state.storeId
     if (invalidStoreId) return;
 
-    fetch(`${BASE_URL}/admin/api/review?store_id=${formState.state.storeId}`)
-      .then(data => data.json())
-      .then(data => {
-        setTimeout(() => {
-          setModalLoading(false);
-        }, 500);
+    // Clear the previous store's rows, or opening store B briefly shows store A's history.
+    setData([])
+    setLoadError(null)
 
-        if (data.data) {
-          setData(data.data)
-        }
+    // Mode A — history for one store. `storeId` here is Store.id (a cuid), which is what the
+    // list rows carry; note "storeId" means a DOMAIN elsewhere in this UI (see the subscriber page).
+    apiFetch("admin/api/review", { query: { store_id: formState.state.storeId } })
+      .then(res => {
+        // An empty array is a valid answer (store with no activity), not an error.
+        setData(res?.data ?? [])
       })
-  }, [formState.state.showModal])
+      .catch(err => {
+        // Without this the promise rejected silently and `modalLoading` stayed true forever —
+        // the modal just span.
+        console.error("Failed to load review history:", err)
+        setLoadError("Could not load this store's review history.")
+      })
+      .finally(() => {
+        setTimeout(() => setModalLoading(false), 500)
+      })
+  }, [formState.state.showModal, formState.state.storeId])
 
   return (
     <>
@@ -65,7 +75,13 @@ export function ReviewHistoryModal({ formState }: { formState: UseStateData<Stat
          *
          */}
         <Scrollable style={{ height: '300px' }}>
-          <IndexTableComponent data={data} />
+          {loadError ? (
+            <Box paddingBlock="400">
+              <Text as="p" tone="critical" alignment="center">{loadError}</Text>
+            </Box>
+          ) : (
+            <IndexTableComponent data={data} />
+          )}
         </Scrollable>
       </Modal>
     </>
@@ -138,11 +154,21 @@ const IndexTableComponent = ({ data }: { data: ApiResponse[] }) => {
     </Box>)
 }
 
-function formatDate(date: string) {
+/**
+ * Format a timestamp for display, degrading to a dash on anything unusable.
+ *
+ * This runs inside a `useMemo` during render, so THROWING here would blank the modal. It previously
+ * threw on an invalid date, and `historyCreatedAt` is nullable in the API response — a missing key
+ * would have produced `new Date(undefined)` → Invalid Date → crash.
+ */
+function formatDate(date: string | null | undefined) {
+  if (!date) {
+    return "—";
+  }
   const dateObject = new Date(date);
 
   if (!isValidDate(dateObject)) {
-    throw new Error("Date is invalid");
+    return "—";
   }
 
   // Helper to pad numbers to 2 digits

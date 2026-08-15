@@ -55,18 +55,29 @@ export interface ProtectionOrder {
 // Array of orders
 export type ProtectionOrderList = ProtectionOrder[];
 
+/**
+ * `packageProtection` as the backend actually returns it (`GET admin/api/subscriber-detail`).
+ *
+ * Two members were renamed in Phase 42 to match the response: `insuranceDisplayButton` →
+ * `cartWidgetPreselected` and `checkoutWidgetButton` → `checkoutWidgetPreselected`. The backend has
+ * emitted the new names since Phase 14 (they follow the Phase 19/28 schema renames) — the old names
+ * were never present in the payload, so reading them yielded `undefined`.
+ *
+ * ⚠️ The components that *send* these fields still post the OLD names; Phase 43 fixes that. Having the
+ * correct names declared here is what makes that a mechanical rename.
+ *
+ * Nullable members are nullable in the response: a store may have no widget row or no selector set.
+ */
 export interface IPackagePackageProtection {
-  insuranceDisplayButton: boolean;
-  checkoutWidgetButton: boolean;
-  productHideSelector: string;
+  cartWidgetPreselected: boolean | null;
+  checkoutWidgetPreselected: boolean | null;
+  productHideSelector: string | null;
   productHideSwitch: boolean;
   checkoutEnable: boolean;
   storeFrontLog: boolean;
   defaultSetting: boolean;
-  cssSelector: string;
-  position: "BEFORE" | "AFTER";
-
-
+  cssSelector: string | null;
+  position: "BEFORE" | "AFTER" | null;
 
   enabled: boolean;
   storeId: string;

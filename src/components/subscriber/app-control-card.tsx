@@ -2,7 +2,9 @@ import { useEffect, useState } from "react";
 import {Button, ButtonGroup} from "@shopify/polaris";
 import SwitchWithLoading from "../common/switch-with-loading";
 import type { IPackagePackageProtection } from "./type";
-import { BASE_URL } from "../../config";
+import { apiFetch } from "../../lib/api-client";
+import { uninstallStore } from "../../lib/store-control";
+import { Modal, TextContainer, TextField } from "@shopify/polaris";
 import CustomWidgetSelector from "./app-controls/custom-widget-selector";
 import HideProduct from "./app-controls/hide-product";
 import Suspend from "./app-controls/suspend";
@@ -36,83 +38,62 @@ const AppControlCard = ({
   // Access control start here
 
   const [uninstallLoading, setUninstallLoading] = useState(false);
+  const [uninstallModalOpen, setUninstallModalOpen] = useState(false);
+  const [confirmDomainInput, setConfirmDomainInput] = useState("");
+  const [uninstallError, setUninstallError] = useState<string | null>(null);
+  // Set once the uninstall POST succeeds; cleared when a refetch shows the webhook has landed.
+  const [uninstallPending, setUninstallPending] = useState(false);
 
   // keep local state in sync when parent `store` changes (e.g. after reload or parent refetch)
   useEffect(() => {
     setUninstallLoading(false);
+    // The webhook has landed — stop showing the pending label.
+    if (store?.uninstalledAt) setUninstallPending(false);
   }, [store]);
 
-  const callAdminAppControl = async (
-    payload: any,
-    setLoading: (val: boolean) => void,
-  ) => {
-    try {
-      setLoading(true);
-
-      const params = new URLSearchParams();
-      Object.entries(payload).forEach(([key, value]) => {
-        if (value !== undefined && value !== null) {
-          params.append(key, String(value));
-        }
-      });
-
-      const res = await fetch(
-        `${BASE_URL}/admin-app-control?${params.toString()}`,
-        {
-          method: "GET",
-          headers: {
-            Accept: "application/json",
-          },
-        },
-      );
-
-      const data = await res.json();
-
-      if (data.ok || data.success) {
-        // let parent optionally refetch
-        setReFetch((prev: boolean) => !prev);
-        return true;
-      } else {
-        console.error("Admin app control error:", data.error || data);
-        return false;
-      }
-    } catch (err) {
-      console.error("Error calling admin-app-control:", err);
-      return false;
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // APP UNINSTALL
-  const handleAppUninstalled = () => {
+  // APP UNINSTALL — irreversible, so it requires typing the store domain to confirm.
+  // Replaces window.confirm(), which one stray Enter key defeated.
+  const handleConfirmUninstall = async () => {
     if (!store) return;
 
-    // optional: confirm in UI
-    if (!window.confirm("Are you sure you want to uninstall this app?")) {
+    if (confirmDomainInput.trim() !== store.domain) {
+      setUninstallError(`Type "${store.domain}" exactly to confirm.`);
       return;
     }
 
-    callAdminAppControl(
-      {
-        type: "uninstall",
-        storeId: store.id,
-      },
-      setUninstallLoading,
-    ).then((ok) => {
-      if (ok) {
-        console.log("Uninstall initiated for store", store.id);
-      }
-    });
+    setUninstallError(null);
+    setUninstallLoading(true);
+    try {
+      await uninstallStore({ storeId: store.id }, confirmDomainInput.trim());
+      // The backend intentionally writes NO local state (D8) — the app/uninstalled webhook applies
+      // it moments later. So show a pending state instead of expecting uninstalledAt to be set,
+      // and let the parent refetch pick up the real value.
+      setUninstallPending(true);
+      setUninstallModalOpen(false);
+      setReFetch((prev: boolean) => !prev);
+    } catch (err) {
+      console.error("Uninstall failed:", err);
+      setUninstallError("Uninstall failed. Please try again.");
+    } finally {
+      setUninstallLoading(false);
+    }
   };
 
+  /**
+   * POST a toggle to `admin/api/subscriber`.
+   *
+   * ⚠️ CONTRACT: every toggle sends its **CURRENT** value and the backend writes the NEGATION
+   * (`admin-subscriber-mutations.service.ts`). So do NOT pre-negate here — passing `!value` would
+   * make the switch a no-op. Inherited from the old Remix route and preserved deliberately.
+   *
+   * Two call sites DO pre-negate, on purpose: `hide-product.tsx` and `custom-widget-selector.tsx`
+   * send `!productHideSwitch` / `!defaultSetting`. Those two fields are OPTIONAL on the backend
+   * (handled by a `!== undefined` check rather than the negating `bool()` path), so their value is
+   * written as-is. Inconsistent, but correct — do not "fix" either side in isolation.
+   */
   const submitApi = (formData: any) => {
-    fetch(`${BASE_URL}/admin/api/subscriber`, {
-      method: "POST",
-      body: formData,
-    })
-      .then(async (res) => {
-        const data = await res.json();
+    apiFetch("admin/api/subscriber", { method: "POST", body: formData })
+      .then((data) => {
         if (data.success) {
           setReFetch((prev: boolean) => !prev);
         } else {
@@ -136,9 +117,10 @@ const AppControlCard = ({
     setAutoLoading(true);
     const formData = new FormData();
     formData.append("storeId", packageProtection.storeId);
+    // Sends the CURRENT value — the backend writes its negation (see submitApi).
     formData.append(
-      "insuranceDisplayButton",
-      packageProtection.insuranceDisplayButton as any,
+      "cartWidgetPreselected",
+      packageProtection.cartWidgetPreselected as any,
     );
     formData.append("action", "autoProtection");
 
@@ -159,11 +141,12 @@ const AppControlCard = ({
     setCheckoutWidgetAutoProtectionLoading(true);
     const formData = new FormData();
     formData.append("storeId", packageProtection.storeId);
+    // Sends the CURRENT value — the backend writes its negation (see submitApi).
     formData.append(
-      "checkoutWidgetButton",
-      packageProtection.checkoutWidgetButton as any,
+      "checkoutWidgetPreselected",
+      packageProtection.checkoutWidgetPreselected as any,
     );
-    formData.append("action", "checkoutWidgetButton");
+    formData.append("action", "checkoutWidgetPreselected");
 
     submitApi(formData);
   };
@@ -228,7 +211,7 @@ const AppControlCard = ({
         <span className="text-lg">Cart Auto Protection</span>
         {packageProtection && (
           <SwitchWithLoading
-            switchOn={packageProtection?.insuranceDisplayButton}
+            switchOn={!!packageProtection?.cartWidgetPreselected}
             handleSwitch={handleAutoProtection}
             isLoading={autoLoading}
           />
@@ -250,7 +233,7 @@ const AppControlCard = ({
         <span className="text-lg">Checkout Auto Protection</span>
         {packageProtection && (
           <SwitchWithLoading
-            switchOn={packageProtection?.checkoutWidgetButton}
+            switchOn={!!packageProtection?.checkoutWidgetPreselected}
             handleSwitch={handleCheckoutAutoProtection}
             isLoading={checkoutWidgetAutoProtectionLoading}
           />
@@ -284,16 +267,62 @@ const AppControlCard = ({
       <div className="flex justify-between my-1 items-center">
         <span className="text-lg">Uninstall</span>
         <Button
-          // disabled={!!store.uninstalledAt}
           size="slim"
           variant="primary"
           tone="critical"
-          onClick={handleAppUninstalled}
+          onClick={() => {
+            setConfirmDomainInput("");
+            setUninstallError(null);
+            setUninstallModalOpen(true);
+          }}
           loading={uninstallLoading}
+          disabled={uninstallPending || !!store?.uninstalledAt}
         >
-          {store?.uninstalledAt ? "Uninstalled" : "Uninstall app"}
+          {store?.uninstalledAt
+            ? "Uninstalled"
+            : uninstallPending
+              ? "Uninstalling…"
+              : "Uninstall app"}
         </Button>
       </div>
+
+      <Modal
+        open={uninstallModalOpen}
+        onClose={() => !uninstallLoading && setUninstallModalOpen(false)}
+        title="Uninstall this app"
+        primaryAction={{
+          content: "Uninstall",
+          destructive: true,
+          onAction: handleConfirmUninstall,
+          loading: uninstallLoading,
+        }}
+        secondaryActions={[
+          {
+            content: "Cancel",
+            onAction: () => setUninstallModalOpen(false),
+            disabled: uninstallLoading,
+          },
+        ]}
+      >
+        <Modal.Section>
+          <TextContainer>
+            <p>
+              This uninstalls the app from <b>{store?.domain}</b> on Shopify. It cannot be undone from
+              here — the merchant would have to reinstall.
+            </p>
+            <TextField
+              label={`Type "${store?.domain}" to confirm`}
+              autoComplete="off"
+              value={confirmDomainInput}
+              onChange={(value) => {
+                setConfirmDomainInput(value);
+                if (uninstallError) setUninstallError(null);
+              }}
+              error={uninstallError || undefined}
+            />
+          </TextContainer>
+        </Modal.Section>
+      </Modal>
       </>
       )}
 

@@ -4,7 +4,7 @@ import SubscribersCart from "./subscripber-card";
 import SubscriberList from "./subscriber-list";
 import useDebounce from "../../hooks/debounce";
 import { useEffect, useState } from "react";
-import { BASE_URL } from "../../config";
+import { apiFetch } from "../../lib/api-client";
 import * as XLSX from "xlsx";
 import type { StoreRecordList } from "./type";
 const Subscribers = () => {
@@ -20,10 +20,9 @@ const Subscribers = () => {
 
   useEffect(() => {
     setLoading(true);
-    fetch(
-      `${BASE_URL}/admin/api/subscriber?page=${page}&limit=50&filter=${filters}&searchTerm=${searchTerm}`
-    )
-      .then((res) => res.json())
+    apiFetch("admin/api/subscriber", {
+      query: { page, limit: 50, filter: filters, searchTerm },
+    })
       .then((res) => {
         setSubscribers(res.data);
         setPagination(res.pagination);
@@ -67,7 +66,8 @@ const Subscribers = () => {
       const conversionRate = isNaN((protectedOrders / totalOrders) * 100)
         ? 0
         : (protectedOrders / totalOrders) * 100;
-      const country = order.Timezone.Country.name;
+      // Blank rather than "—" here: this feeds a spreadsheet cell.
+      const country = order.Timezone?.Country?.name ?? "";
       const { name, plan, development, createdAt } = order;
       return {
         name,
@@ -87,8 +87,9 @@ const Subscribers = () => {
 
   const handleExport = () => {
     // fetch export data from the API
-    fetch(`${BASE_URL}/admin/api/exports?action=subscriber&filter=${filters}`)
-      .then((res) => res.json())
+    apiFetch("admin/api/exports", {
+      query: { action: "subscriber", filter: filters },
+    })
       .then((res) => {
         const xlsxData = prepareExportData(res.data);
         const wb = XLSX.utils.book_new();

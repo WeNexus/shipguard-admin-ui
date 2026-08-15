@@ -1,7 +1,8 @@
 import { Button, Modal, TextContainer, TextField } from "@shopify/polaris";
 import SwitchWithLoading from "../../common/switch-with-loading";
 import { useEffect, useState } from "react";
-import { BASE_URL, DEFAULT_SUSPEND_REASON } from "../../../config";
+import { DEFAULT_SUSPEND_REASON } from "../../../config";
+import { blockStore, unblockStore } from "../../../lib/store-control";
 
 const Suspend = ({ store, setReFetch }: { store: any; setReFetch: any }) => {
   const [suspendLoading, setSuspendLoading] = useState(false);
@@ -17,6 +18,7 @@ const Suspend = ({ store, setReFetch }: { store: any; setReFetch: any }) => {
     null,
   );
   const [suspendModalOpen, setSuspendModalOpen] = useState(false);
+  const [actionError, setActionError] = useState<string | null>(null);
   const [editSuspendReasonText, setEditSuspendReasonText] = useState("");
   const [editSuspendReasonError, setEditSuspendReasonError] = useState<
     string | null
@@ -48,66 +50,24 @@ const Suspend = ({ store, setReFetch }: { store: any; setReFetch: any }) => {
     store?.appReview,
   ]);
 
-  const callAdminAppControl = async (
-    payload: any,
-    setLoading: (val: boolean) => void,
-  ) => {
-    try {
-      setLoading(true);
-
-      const params = new URLSearchParams();
-      Object.entries(payload).forEach(([key, value]) => {
-        if (value !== undefined && value !== null) {
-          params.append(key, String(value));
-        }
-      });
-
-      const res = await fetch(
-        `${BASE_URL}/admin-app-control?${params.toString()}`,
-        {
-          method: "GET",
-          headers: {
-            Accept: "application/json",
-          },
-        },
-      );
-
-      const data = await res.json();
-
-      if (data.ok || data.success) {
-        // let parent optionally refetch
-        setReFetch((prev: boolean) => !prev);
-        return true;
-      } else {
-        console.error("Admin app control error:", data.error || data);
-        return false;
-      }
-    } catch (err) {
-      console.error("Error calling admin-app-control:", err);
-      return false;
-    } finally {
-      setLoading(false);
-    }
-  };
-
   // SUSPEND SWITCH CLICK
   const handleSuspendToggle = () => {
     if (!store) return;
 
     if (isBlocked) {
       // Already blocked -> unsuspend directly
-      callAdminAppControl(
-        {
-          type: "ready",
-          storeId: store.id,
-        },
-        setSuspendLoading,
-      ).then((ok) => {
-        if (ok) {
+      setSuspendLoading(true);
+      unblockStore({ storeId: store.id })
+        .then(() => {
           setLocalAppStatus("READY");
           setSuspendReasonDisplay("");
-        }
-      });
+          setReFetch((prev: boolean) => !prev);
+        })
+        .catch((err) => {
+          console.error("Failed to lift suspension:", err);
+          setActionError("Could not lift the suspension. Please try again.");
+        })
+        .finally(() => setSuspendLoading(false));
     } else {
       // Not blocked yet -> open modal to collect reason
       setSuspendModalReason(DEFAULT_SUSPEND_REASON);
@@ -137,20 +97,18 @@ const Suspend = ({ store, setReFetch }: { store: any; setReFetch: any }) => {
     }
 
     setSuspendModalError(null);
-
-    const ok = await callAdminAppControl(
-      {
-        type: "block",
-        storeId: store.id,
-        suspendReason: suspendModalReason.trim(),
-      },
-      setSuspendLoading,
-    );
-
-    if (ok) {
+    setSuspendLoading(true);
+    try {
+      await blockStore({ storeId: store.id }, suspendModalReason.trim());
       setLocalAppStatus("BLOCKED");
       setSuspendReasonDisplay(suspendModalReason.trim());
       setSuspendModalOpen(false);
+      setReFetch((prev: boolean) => !prev);
+    } catch (err) {
+      console.error("Failed to suspend store:", err);
+      setSuspendModalError("Could not suspend this store. Please try again.");
+    } finally {
+      setSuspendLoading(false);
     }
   };
 
@@ -170,19 +128,19 @@ const Suspend = ({ store, setReFetch }: { store: any; setReFetch: any }) => {
     }
 
     setEditSuspendReasonError(null);
-
-    const ok = await callAdminAppControl(
-      {
-        type: "block",
-        storeId: store.id,
-        suspendReason: editSuspendReasonText.trim(),
-      },
-      setEditSuspendReasonLoading,
-    );
-
-    if (ok) {
+    setEditSuspendReasonLoading(true);
+    try {
+      // Re-issues `block` with the new reason — the store is already BLOCKED, so this is an
+      // idempotent reason update (upsert on BlockedShop), matching the old behaviour.
+      await blockStore({ storeId: store.id }, editSuspendReasonText.trim());
       setSuspendReasonDisplay(editSuspendReasonText.trim());
       setEditSuspendReasonModalOpen(false);
+      setReFetch((prev: boolean) => !prev);
+    } catch (err) {
+      console.error("Failed to update suspension reason:", err);
+      setEditSuspendReasonError("Could not update the reason. Please try again.");
+    } finally {
+      setEditSuspendReasonLoading(false);
     }
   };
 
@@ -198,6 +156,10 @@ const Suspend = ({ store, setReFetch }: { store: any; setReFetch: any }) => {
           />
         )}
       </div>
+
+      {actionError && (
+        <div className="mt-1 text-sm text-red-600">{actionError}</div>
+      )}
 
       {isBlocked && suspendReasonDisplay && (
         <div className="mt-2 flex gap-2">

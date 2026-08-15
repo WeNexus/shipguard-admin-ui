@@ -13,7 +13,7 @@ import { useState, useMemo, useEffect } from "react";
 import { moneyFormater } from "../../utils/money-format";
 import SwitchButton from "../common/switch-button";
 import type { StoreRecordList } from "./type";
-import { BASE_URL } from "../../config";
+import { apiFetch } from "../../lib/api-client";
 import { Link } from "react-router";
 
 const SubscriberList = ({
@@ -66,12 +66,8 @@ const SubscriberList = ({
     formData.append("development", development.toString());
     formData.append("action", "updateStore");
 
-    fetch(`${BASE_URL}/admin/api/subscriber`, {
-      method: "POST",
-      body: formData,
-    })
-      .then(async (res) => {
-        const data = await res.json();
+    apiFetch("admin/api/subscriber", { method: "POST", body: formData })
+      .then((data) => {
         if (data.success) {
           setReFetch((prev: boolean) => !prev);
         } else {
@@ -104,7 +100,10 @@ const SubscriberList = ({
       const conversionRate = isNaN((protectedOrders / totalOrders) * 100)
         ? 0
         : (protectedOrders / totalOrders) * 100;
-      const country = store.Timezone.Country.name;
+      // Optional-chained: `Country` is nullable by construction (a store whose Shopify profile
+      // has not synced has no country). An unguarded read threw inside this useMemo, which
+      // white-screened the entire Subscribers page.
+      const country = store.Timezone?.Country?.name ?? "—";
 
       return {
         id: store.id,

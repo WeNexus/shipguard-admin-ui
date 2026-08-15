@@ -4,13 +4,16 @@ import { ArrowLeftIcon } from "@shopify/polaris-icons";
 import SubscriberDetailsCart from "./subscriber-details-card";
 import AppControlCard from "./app-control-card";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router";
-import { BASE_URL } from "../../config";
+import { useNavigate, useParams } from "react-router";
+import { apiFetch } from "../../lib/api-client";
 import type { IPackagePackageProtection, ProtectionOrderList } from "./type";
 import useDebounce from "../../hooks/debounce";
 
 const Subscriber = () => {
-  const { storeId } = useParams<{ storeId: string }>();
+  // The route param is the store DOMAIN, not an id. It was named `storeId` here and in the old API,
+  // which is why the backend endpoint was renamed to `?domain=` (Phase 14) — see the note below.
+  const { domain } = useParams<{ domain: string }>();
+  const navigate = useNavigate();
   const [reFetch, setReFetch] = useState<boolean>(false);
 
   const [orders, setOrders] = useState<ProtectionOrderList>([]);
@@ -26,10 +29,13 @@ const Subscriber = () => {
     useState<IPackagePackageProtection>({} as IPackagePackageProtection);
 
   useEffect(() => {
-    fetch(
-      `${BASE_URL}/admin/api?storeId=${storeId}&page=${page}&limit=50&filter=${filters}&searchTerm=${searchTerm}`
-    )
-      .then((res) => res.json())
+    // The old Remix route was the `admin.api.$` splat — `GET /admin/api?storeId=<DOMAIN>`, where the
+    // param was a misnomer (the loader did `findFirst({ where: { domain } })`). The new backend exposes
+    // it honestly as `subscriber-detail?domain=`. `POST /admin/api` is the LOGIN endpoint now, so the
+    // old shape could not have been kept even if we wanted to.
+    apiFetch("admin/api/subscriber-detail", {
+      query: { domain, page, limit: 50, filter: filters, searchTerm },
+    })
       .then((res) => {
         setStore(res.store)
         setOrders(res.orders);
@@ -46,7 +52,7 @@ const Subscriber = () => {
 
         console.error("Error fetching subscriber data:", err);
       });
-  }, [storeId, reFetch, page, filters, searchTerm]);
+  }, [domain, reFetch, page, filters, searchTerm]);
 
   useEffect(() => {
     setPage(1);
@@ -56,14 +62,17 @@ const Subscriber = () => {
     <div className="p-6">
       <div className="flex justify-between">
         <div className="flex gap-2">
+          {/* navigate(), not location.href — a full reload throws away the token-bearing SPA state
+              and re-runs bootstrap for no reason. Keeps the hash router + GitHub Pages base path. */}
           <Button
             icon={ArrowLeftIcon}
-            onClick={() =>
-              (location.href = "/shipguard-admin-ui/#/subscribers/")
-            }
+            onClick={() => navigate("/subscribers")}
           ></Button>{" "}
+          {/* From `store`, not `orders[0]`: a store with zero orders — or any active filter/search
+              that returns no rows — used to show the generic fallback even though the response
+              carries the real name. */}
           <span className="text-2xl font-bold">
-            {orders.length > 0 ? orders[0]?.Store.name : "Subscriber Details"}
+            {store?.name ?? "Subscriber Details"}
           </span>
         </div>
         <div className="text-lg">
@@ -73,8 +82,8 @@ const Subscriber = () => {
       </div>
       <h2>
         Store domain:{" "}
-        <Link url={`https://${storeId}`} removeUnderline target="_blank">
-          {storeId}
+        <Link url={`https://${domain}`} removeUnderline target="_blank">
+          {domain}
         </Link>
       </h2>
 
@@ -83,7 +92,7 @@ const Subscriber = () => {
         <div className="col-span-1 md:col-span-6 lg:col-span-7 xl:col-span-5">
           <SubscriberDetailsCart
             stats={stats}
-            moneyFormat={orders[0]?.Store.currencyCode ?? "$"}
+            moneyFormat={orders[0]?.Store.currencyCode ?? store?.currencyCode ?? ""}
           />
         </div>
         <div className="col-span-1 md:col-span-6 lg:col-span-4 xl:col-span-2">

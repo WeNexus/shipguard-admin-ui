@@ -1,0 +1,7 @@
+# pnpm 11 blocks dependency install scripts by default, and an unapproved native build makes
+# `pnpm install` exit 1 — which fails the build outright rather than just warning. These two ship
+# native binaries this repo genuinely needs to compile Tailwind and bundle with Vite.
+# (The backend has the same file for `bcrypt`.) Safe to commit: no secrets, just build policy.
+allowBuilds:
+  '@tailwindcss/oxide': true
+  esbuild: true

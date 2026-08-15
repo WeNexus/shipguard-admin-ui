@@ -1,15 +1,22 @@
 import { useEffect, useState } from "react";
 import { Button, Divider, RadioButton, Select } from "@shopify/polaris";
 import type { IPackagePackageProtection } from "../type";
-import { BASE_URL } from "../../../config";
+import { apiFetch } from "../../../lib/api-client";
 
 const MIN_SKELETON_MS = 400;
 
-type StoreSubscriptionType = "Free" | "Monthly" | "Usage";
+type StoreSubscriptionType = "Free" | "Monthly" | "Usage" | "PayAsYouGoOnly";
 
 type SubscriptionState = {
+  /** The STORED per-store flag — not effective eligibility. See globalShowFounder. */
   eligibleForFounder: boolean;
   storeSubscriptionType: StoreSubscriptionType;
+  /**
+   * True when the global "Show Founder to merchant" setting is on, in which case every store sees the
+   * Founder plan regardless of the per-store flag. Surfaced so this control can say so, instead of
+   * looking like it refuses to save.
+   */
+  globalShowFounder: boolean;
 };
 
 const Subscription = ({
@@ -26,10 +33,13 @@ const Subscription = ({
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
   const [state, setState] = useState<SubscriptionState>({
     eligibleForFounder: false,
     storeSubscriptionType: "Free",
+    globalShowFounder: false,
   });
+  const [saved, setSaved] = useState(false);
 
   /* load initial data */
   useEffect(() => {
@@ -40,17 +50,14 @@ const Subscription = ({
       try {
         setLoading(true);
         setLoadError(null);
-        const params = new URLSearchParams();
-        if (storeId) params.append("storeId", String(storeId));
-        const res = await fetch(
-          `${BASE_URL}/admin/subscribers/subscription?shop=${store.domain}`,
-          { method: "GET", signal: controller.signal },
-        );
-        const json = await res.json();
+        const json = await apiFetch("admin/subscribers/subscription", {
+          query: { shop: store?.domain },
+          signal: controller.signal,
+        });
 
+        // The old contract puts a statusCode in the BODY; a real HTTP status may accompany it.
         const apiStatus = json?.statusCode;
-        const apiOk =
-          apiStatus === undefined ? res.ok : apiStatus >= 200 && apiStatus < 300;
+        const apiOk = apiStatus === undefined ? true : apiStatus >= 200 && apiStatus < 300;
 
         if (!apiOk || !json?.data) {
           console.error("Failed to load subscription:", json);
@@ -61,8 +68,8 @@ const Subscription = ({
         setState({
           eligibleForFounder: !!json.data.eligibleForFounder,
           storeSubscriptionType:
-            (json.data.storeSubscriptionType as StoreSubscriptionType) ??
-            "Free",
+            (json.data.storeSubscriptionType as StoreSubscriptionType) ?? "Free",
+          globalShowFounder: !!json.data.globalShowFounder,
         });
       } catch (err: any) {
         if (err?.name !== "AbortError") {
@@ -84,7 +91,9 @@ const Subscription = ({
 
     load();
     return () => controller.abort();
-  }, [storeId]);
+    // Depend on the domain too — it is what the request is keyed on, so a store change with the
+    // same/absent storeId would otherwise never refetch.
+  }, [storeId, store?.domain]);
 
   const handlePricingGroupChange = (value: "Free" | "Paid") => {
     if (value === "Free") {
@@ -108,25 +117,31 @@ const Subscription = ({
   const handleSave = async () => {
     try {
       setSaving(true);
-      const res = await fetch(`${BASE_URL}/admin/subscribers/subscription?shop=${store.domain}`, {
+      // `storeId` is deliberately NOT sent: the old API ignored it (deriving the store from
+      // ?shop=), and the backend's global ValidationPipe runs `forbidNonWhitelisted: true`, so an
+      // undeclared extra property would come back as a confusing 400.
+      const json = await apiFetch("admin/subscribers/subscription", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          storeId,
+        query: { shop: store?.domain },
+        body: {
           eligibleForFounder: state.eligibleForFounder,
           storeSubscriptionType: state.storeSubscriptionType,
-        }),
+        },
       });
-      const json = await res.json();
-      if (!res.ok || (json?.statusCode && json.statusCode !== 200)) {
+      if (json?.statusCode && json.statusCode !== 200) {
         console.error("Failed to save subscription:", json);
+        setSaveError("Failed to save. Please try again.");
         return;
       }
+      setSaveError(null);
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2500);
       if (typeof setReFetch === "function") {
         setReFetch((prev: boolean) => !prev);
       }
     } catch (err) {
       console.error("Error saving subscription:", err);
+      setSaveError("Failed to save. Please try again.");
     } finally {
       setSaving(false);
     }
@@ -225,8 +240,23 @@ const Subscription = ({
                 onChange={handleFounderChange}
               />
             )}
+
+            {/* Without this, an admin who sets Hide while the global flag is ON sees the merchant
+                still getting the Founder plan and assumes this control is broken. The value above is
+                the STORED per-store flag; effective eligibility is `global OR per-store`. */}
+            {!loading && state.globalShowFounder && (
+              <div className="mt-2 text-xs text-amber-700">
+                Global “Show Founder to merchant” is ON — every store sees the Founder plan regardless
+                of this setting. Change it in Settings.
+              </div>
+            )}
           </div>
         </>
+      )}
+
+      {saveError && <div className="mt-3 text-sm text-red-600">{saveError}</div>}
+      {saved && !saveError && (
+        <div className="mt-3 text-sm text-green-700">Saved.</div>
       )}
 
       <div className="flex justify-end mt-3">
