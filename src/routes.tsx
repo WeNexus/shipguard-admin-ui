@@ -9,6 +9,7 @@ import ActivityLogs from "./components/logs";
 import Settings from "./components/settings";
 import Integrations from "./components/integrations";
 import Review from "./components/review";
+import Gql from "./components/gql";
 
 export const router = createHashRouter([
   {},
@@ -68,6 +69,14 @@ export const router = createHashRouter([
     element: (
       <Layout>
         <Review />
+      </Layout>
+    ),
+  },
+  {
+    path: "gql",
+    element: (
+      <Layout>
+        <Gql />
       </Layout>
     ),
   },

@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import type { INavItem } from "./type";
 import { Navigate, useLocation } from "react-router";
 import {
+  CodeIcon,
   HomeIcon,
   OrderIcon,
   PackageIcon,
@@ -45,6 +46,11 @@ const Layout = ({ children }: DashboardLayoutProps) => {
         name: "Review Stats",
         url: "/review",
         icon: StarIcon,
+      },
+      {
+        name: "GraphQL",
+        url: "/gql",
+        icon: CodeIcon,
       },
     ].map((item) => {
       const isClaimsRoute = /^\/subscribers\/[^/]+$/.test(location.pathname);
