@@ -9,11 +9,14 @@
 /** Both panes share it so they line up. */
 export const EDITOR_HEIGHT = "420px";
 
-/** Row of `GET admin/gql/stores`. `name` is display-ready — the backend falls back to the domain. */
-export interface GqlStoreOption {
-  domain: string;
-  name: string;
-}
+/**
+ * Row of `GET admin/gql/stores`.
+ *
+ * Re-exported, not declared: the webhook-reset screen picks a store from the same endpoint, so the
+ * shape moved to `components/common/type.ts` alongside the shared `StoreSelect`. The alias stays so
+ * this feature's own files keep reading in its own vocabulary.
+ */
+export type { StoreOption as GqlStoreOption } from "../common/type";
 
 /**
  * Body of `POST admin/gql/run`, always at HTTP 200.

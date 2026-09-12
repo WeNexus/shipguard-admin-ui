@@ -1,4 +1,6 @@
 import { useMemo, useState } from "react";
+import { Button } from "@shopify/polaris";
+import { useNavigate } from "react-router";
 import DateRangePicker from "../common/date-range-picker";
 import { default30Days } from "../../utils/default30Days";
 import type { IActiveDates } from "../layout/type";
@@ -9,6 +11,7 @@ import AdminCard from "./admin-card";
 const Dashboard = () => {
   const defaultActiveDates = useMemo(() => default30Days(), []);
   const [, setActiveDates] = useState<IActiveDates>(defaultActiveDates); //activeDates
+  const navigate = useNavigate();
 
   const lineData = [
     {
@@ -63,8 +66,10 @@ const Dashboard = () => {
 
   return (
     <>
-      <div className="p-6 pb-0 flex gap-4 bg-gray-50">
+      <div className="p-6 pb-0 flex gap-4 items-center justify-between bg-gray-50">
         <DateRangePicker setActiveDates={setActiveDates} />
+        {/* The webhook reset has no sidebar entry — this is its only entry point. */}
+        <Button onClick={() => navigate("/webhooks")}>Re-register webhooks</Button>
       </div>
       <div className="p-4 md:p-6 bg-gray-50">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-6">

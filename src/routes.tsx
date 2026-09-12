@@ -10,6 +10,7 @@ import Settings from "./components/settings";
 import Integrations from "./components/integrations";
 import Review from "./components/review";
 import Gql from "./components/gql";
+import Webhooks from "./components/webhooks";
 
 export const router = createHashRouter([
   {},
@@ -77,6 +78,15 @@ export const router = createHashRouter([
     element: (
       <Layout>
         <Gql />
+      </Layout>
+    ),
+  },
+  {
+    // No sidebar entry: reached from the dashboard's "Re-register webhooks" button.
+    path: "webhooks",
+    element: (
+      <Layout>
+        <Webhooks />
       </Layout>
     ),
   },

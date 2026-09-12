@@ -1,7 +1,7 @@
 import { Combobox, Icon, Listbox } from "@shopify/polaris";
 import { SearchIcon } from "@shopify/polaris-icons";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import type { GqlStoreOption } from "./type";
+import type { StoreOption } from "./type";
 
 /**
  * Rendered ceiling, not a search ceiling — the filter always runs over every store. Past this many
@@ -10,19 +10,20 @@ import type { GqlStoreOption } from "./type";
  */
 const MAX_VISIBLE = 50;
 
-function labelFor(store: GqlStoreOption): string {
+function labelFor(store: StoreOption): string {
   return store.name === store.domain ? store.domain : `${store.name} — ${store.domain}`;
 }
 
 interface StoreSelectProps {
-  stores: GqlStoreOption[];
+  stores: StoreOption[];
   selected: string;
   onChange: (domain: string) => void;
   disabled?: boolean;
 }
 
 /**
- * Searchable store picker. The value is the DOMAIN — that is what `POST admin/gql/run` targets.
+ * Searchable store picker, shared by every admin screen that acts on one store. The value is the
+ * DOMAIN — that is what the endpoints target (`POST admin/gql/run`, `POST admin/webhooks/reset`).
  *
  * A Combobox rather than a Select: the list is every installed store, which a native dropdown makes
  * you scroll blind. Filtering is client-side over the already-loaded list, so it is instant and
