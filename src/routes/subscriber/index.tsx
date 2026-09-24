@@ -3,6 +3,7 @@ import SubscriberOrderList from "../orders/subscriber-order-list";
 import { ArrowLeftIcon } from "@shopify/polaris-icons";
 import SubscriberDetailsCart from "./subscriber-details-card";
 import AppControlCard from "./app-control-card";
+import WidgetSettings from "./widget-settings";
 import SubscriberTabSelect, {
   type SubscriberTabId,
 } from "./subscriber-tab-select";
@@ -100,14 +101,16 @@ const Subscriber = () => {
         </Link>
       </h2>
 
-      <br/>
+      <br />
 
       {/*<SubscriberTabSelect*/}
       {/*  selectedTab={selectedTab}*/}
       {/*  onSelect={setSelectedTab}*/}
       {/*/>*/}
 
-      {selectedTab !== "order" ? (
+      {selectedTab === "widget-settings" ? (
+        <WidgetSettings />
+      ) : selectedTab !== "order" ? (
         <div className="border rounded-lg shadow p-10 text-center">
           <Text as="p" variant="headingLg" tone="subdued">
             Coming Soon
