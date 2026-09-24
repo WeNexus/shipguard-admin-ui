@@ -16,10 +16,6 @@ import useAuth from "../../hooks/use-auth";
 // Layout route: the matched child page renders into <Outlet />.
 const Layout = () => {
   const isLoggedIn = useAuth();
-  if (!isLoggedIn) {
-    return <Navigate to="/login" />;
-  }
-
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
 
@@ -61,6 +57,12 @@ const Layout = () => {
     });
   }, [location.pathname]);
   const activeNavItem = navItems.find((item) => item.active);
+
+  // Redirect only after every hook has run, so hook order is stable across renders.
+  if (!isLoggedIn) {
+    return <Navigate to="/login" />;
+  }
+
   return (
     <div className="flex h-screen bg-gray-50">
       {/* Mobile sidebar overlay */}
