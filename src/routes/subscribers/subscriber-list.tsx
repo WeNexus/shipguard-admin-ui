@@ -11,7 +11,7 @@ import {
 import type { TabProps } from "@shopify/polaris";
 import { useState, useMemo, useEffect } from "react";
 import { moneyFormater } from "../../utils/money-format";
-import SwitchButton from "../common/switch-button";
+import SwitchButton from "../../components/common/switch-button";
 import type { StoreRecordList } from "./type";
 import { apiFetch } from "../../lib/api-client";
 import { Link } from "react-router";

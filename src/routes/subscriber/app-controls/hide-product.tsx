@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import type { IPackagePackageProtection } from "../type";
-import SwitchWithLoading from "../../common/switch-with-loading";
+import SwitchWithLoading from "../../../components/common/switch-with-loading";
 import { Button, Collapsible, TextField } from "@shopify/polaris";
 import { apiFetch } from "../../../lib/api-client";
 

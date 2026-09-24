@@ -16,7 +16,7 @@ export const EDITOR_HEIGHT = "420px";
  * shape moved to `components/common/type.ts` alongside the shared `StoreSelect`. The alias stays so
  * this feature's own files keep reading in its own vocabulary.
  */
-export type { StoreOption as GqlStoreOption } from "../common/type";
+export type { StoreOption as GqlStoreOption } from "../../components/common/type";
 
 /**
  * Body of `POST admin/gql/run`, always at HTTP 200.

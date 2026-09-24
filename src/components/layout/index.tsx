@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import type { INavItem } from "./type";
-import { Navigate, useLocation } from "react-router";
+import { Navigate, Outlet, useLocation } from "react-router";
 import {
   CodeIcon,
   HomeIcon,
@@ -13,10 +13,8 @@ import Sidebar from "./sidebar";
 import TopBar from "./topbar";
 import useAuth from "../../hooks/use-auth";
 
-interface DashboardLayoutProps {
-  children: React.ReactNode;
-}
-const Layout = ({ children }: DashboardLayoutProps) => {
+// Layout route: the matched child page renders into <Outlet />.
+const Layout = () => {
   const isLoggedIn = useAuth();
   if (!isLoggedIn) {
     return <Navigate to="/login" />;
@@ -87,7 +85,9 @@ const Layout = ({ children }: DashboardLayoutProps) => {
           open={sidebarOpen}
           activeNavItem={activeNavItem}
         />
-        <main className="flex-1 overflow-y-auto">{children}</main>
+        <main className="flex-1 overflow-y-auto">
+          <Outlet />
+        </main>
       </div>
     </div>
   );

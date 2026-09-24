@@ -1,7 +1,7 @@
 import { Banner, Button, InlineStack, Layout, Page } from "@shopify/polaris";
 import { useEffect, useState } from "react";
 import { apiFetch, ApiError } from "../../lib/api-client";
-import StoreSelect from "../common/store-select";
+import StoreSelect from "../../components/common/store-select";
 import QueryEditor from "./query-editor";
 import ResultView from "./result-view";
 import type { GqlRunResult, GqlStoreOption } from "./type";

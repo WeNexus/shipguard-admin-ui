@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import {Button, ButtonGroup} from "@shopify/polaris";
-import SwitchWithLoading from "../common/switch-with-loading";
+import SwitchWithLoading from "../../components/common/switch-with-loading";
 import type { IPackagePackageProtection } from "./type";
 import { apiFetch } from "../../lib/api-client";
 import { uninstallStore } from "../../lib/store-control";

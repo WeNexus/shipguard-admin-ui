@@ -1,5 +1,5 @@
 import { Button, Collapsible, Select, TextField } from "@shopify/polaris";
-import SwitchWithLoading from "../../common/switch-with-loading";
+import SwitchWithLoading from "../../../components/common/switch-with-loading";
 import { useEffect, useState } from "react";
 import { apiFetch } from "../../../lib/api-client";
 import type { IPackagePackageProtection } from "../type";

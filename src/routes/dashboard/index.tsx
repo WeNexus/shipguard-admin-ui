@@ -1,9 +1,9 @@
 import { useMemo, useState } from "react";
 import { Button } from "@shopify/polaris";
 import { useNavigate } from "react-router";
-import DateRangePicker from "../common/date-range-picker";
+import DateRangePicker from "../../components/common/date-range-picker";
 import { default30Days } from "../../utils/default30Days";
-import type { IActiveDates } from "../layout/type";
+import type { IActiveDates } from "../../components/layout/type";
 import PieChart from "./pie-chart";
 import LineChartForDashboard from "./line-chart";
 import AdminCard from "./admin-card";

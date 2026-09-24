@@ -1,5 +1,5 @@
 import { Button, Modal, TextContainer, TextField } from "@shopify/polaris";
-import SwitchWithLoading from "../../common/switch-with-loading";
+import SwitchWithLoading from "../../../components/common/switch-with-loading";
 import { useEffect, useState } from "react";
 import { DEFAULT_SUSPEND_REASON } from "../../../config";
 import { blockStore, unblockStore } from "../../../lib/store-control";

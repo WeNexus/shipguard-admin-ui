@@ -1,8 +1,8 @@
 import { Badge, Banner, Button, InlineStack, Modal, Page, Text } from "@shopify/polaris";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ApiError, apiFetch } from "../../lib/api-client";
-import StoreSelect from "../common/store-select";
-import type { StoreOption } from "../common/type";
+import StoreSelect from "../../components/common/store-select";
+import type { StoreOption } from "../../components/common/type";
 import ResetReport from "./reset-report";
 import SubscriptionTable from "./subscription-table";
 import type {
