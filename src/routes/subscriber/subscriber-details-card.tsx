@@ -112,8 +112,9 @@ const SubscriberDetailsCart = ({
                 {e.title}
               </Text>
               <span
-                className={`font-semibold text-2xl sm:text-4xl ${i === 1 ? "text-green-600" : "text-gray-700"
-                  }`}
+                className={`font-semibold text-2xl sm:text-4xl ${
+                  i === 1 ? "text-green-600" : "text-gray-700"
+                }`}
               >
                 {e.value}
               </span>

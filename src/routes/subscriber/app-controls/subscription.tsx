@@ -57,7 +57,8 @@ const Subscription = ({
 
         // The old contract puts a statusCode in the BODY; a real HTTP status may accompany it.
         const apiStatus = json?.statusCode;
-        const apiOk = apiStatus === undefined ? true : apiStatus >= 200 && apiStatus < 300;
+        const apiOk =
+          apiStatus === undefined ? true : apiStatus >= 200 && apiStatus < 300;
 
         if (!apiOk || !json?.data) {
           console.error("Failed to load subscription:", json);
@@ -68,7 +69,8 @@ const Subscription = ({
         setState({
           eligibleForFounder: !!json.data.eligibleForFounder,
           storeSubscriptionType:
-            (json.data.storeSubscriptionType as StoreSubscriptionType) ?? "Free",
+            (json.data.storeSubscriptionType as StoreSubscriptionType) ??
+            "Free",
           globalShowFounder: !!json.data.globalShowFounder,
         });
       } catch (err: any) {
@@ -158,7 +160,8 @@ const Subscription = ({
       {loadError ? (
         <div className="mt-2 p-3 rounded-md bg-white/60">
           <div className="py-4 text-sm text-red-600">
-            Failed to load data{loadError && loadError !== "Failed to load data"
+            Failed to load data
+            {loadError && loadError !== "Failed to load data"
               ? `: ${loadError}`
               : ""}
           </div>
@@ -246,15 +249,17 @@ const Subscription = ({
                 the STORED per-store flag; effective eligibility is `global OR per-store`. */}
             {!loading && state.globalShowFounder && (
               <div className="mt-2 text-xs text-amber-700">
-                Global “Show Founder to merchant” is ON — every store sees the Founder plan regardless
-                of this setting. Change it in Settings.
+                Global “Show Founder to merchant” is ON — every store sees the
+                Founder plan regardless of this setting. Change it in Settings.
               </div>
             )}
           </div>
         </>
       )}
 
-      {saveError && <div className="mt-3 text-sm text-red-600">{saveError}</div>}
+      {saveError && (
+        <div className="mt-3 text-sm text-red-600">{saveError}</div>
+      )}
       {saved && !saveError && (
         <div className="mt-3 text-sm text-green-700">Saved.</div>
       )}

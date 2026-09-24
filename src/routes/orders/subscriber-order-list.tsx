@@ -99,26 +99,25 @@ const SubscriberOrderList = ({
           PackageProtectionClaimOrder,
           Store,
         },
-        index
+        index,
       ) => {
         const status = PackageProtectionClaimOrder?.map((i) => i.claimStatus);
         const claimStatus:
-          | "Requested"
-          | "Processing"
-          | "Canceled"
-          | "Approved" = status?.every((i) => i === "CANCEL")
+          "Requested" | "Processing" | "Canceled" | "Approved" = status?.every(
+          (i) => i === "CANCEL",
+        )
           ? "Canceled"
           : status?.every((i) => i === "REQUESTED")
-          ? "Requested"
-          : status?.every((i) => i === "APPROVE")
-          ? "Approved"
-          : "Processing";
+            ? "Requested"
+            : status?.every((i) => i === "APPROVE")
+              ? "Approved"
+              : "Processing";
 
         const formattedTime = DateTime.fromJSDate(new Date(orderDate), {
           zone: Store.timezoneId,
         }).toFormat("ff");
         const localTime = DateTime.fromJSDate(new Date(orderDate)).toFormat(
-          "ff"
+          "ff",
         );
 
         return (
@@ -154,15 +153,15 @@ const SubscriberOrderList = ({
                     fulfillmentStatus === "PARTIALLY_FULFILLED"
                       ? "partiallyComplete"
                       : fulfillmentStatus === "FULFILLED"
-                      ? "complete"
-                      : "incomplete"
+                        ? "complete"
+                        : "incomplete"
                   }
                   tone={
                     fulfillmentStatus === "PARTIALLY_FULFILLED"
                       ? "warning"
                       : fulfillmentStatus === "FULFILLED"
-                      ? "success"
-                      : "attention"
+                        ? "success"
+                        : "attention"
                   }
                 >
                   {fulfillmentStatus.toLowerCase()}
@@ -178,17 +177,17 @@ const SubscriberOrderList = ({
                       claimStatus === "Requested"
                         ? "incomplete"
                         : claimStatus === "Approved"
-                        ? "complete"
-                        : "partiallyComplete"
+                          ? "complete"
+                          : "partiallyComplete"
                     }
                     tone={
                       claimStatus === "Approved"
                         ? "success"
                         : claimStatus === "Canceled"
-                        ? "critical"
-                        : claimStatus === "Requested"
-                        ? "warning"
-                        : "info"
+                          ? "critical"
+                          : claimStatus === "Requested"
+                            ? "warning"
+                            : "info"
                     }
                   >
                     {claimStatus}
@@ -198,10 +197,10 @@ const SubscriberOrderList = ({
                       claimStatus === "Approved"
                         ? "success"
                         : claimStatus === "Canceled"
-                        ? "critical"
-                        : claimStatus === "Requested"
-                        ? "warning"
-                        : "info"
+                          ? "critical"
+                          : claimStatus === "Requested"
+                            ? "warning"
+                            : "info"
                     }
                   >
                     {PackageProtectionClaimOrder?.length.toString()}
@@ -218,7 +217,7 @@ const SubscriberOrderList = ({
             <IndexTable.Cell>{localTime}</IndexTable.Cell>
           </IndexTable.Row>
         );
-      }
+      },
     );
   }, [orders]);
 

@@ -14,5 +14,5 @@ createRoot(document.getElementById("root")!).render(
     <AppProvider i18n={enTranslations}>
       <RouterProvider router={router} />
     </AppProvider>
-  </StrictMode>
+  </StrictMode>,
 );

@@ -7,8 +7,8 @@
  * Every access is wrapped: `localStorage` throws in Safari private mode and when a site is running
  * with cookies/storage blocked, and an uncaught throw here would take down app boot.
  */
-const TOKEN_KEY = 'adminToken';
-const EMAIL_KEY = 'userEmail';
+const TOKEN_KEY = "adminToken";
+const EMAIL_KEY = "userEmail";
 
 function read(key: string): string | null {
   try {
@@ -68,14 +68,14 @@ export function hasValidToken(): boolean {
 
 function readExpiry(token: string): number | null {
   try {
-    const payload = token.split('.')[1];
+    const payload = token.split(".")[1];
     if (!payload) {
       return null;
     }
     // JWT uses base64url; atob needs plain base64.
-    const json = atob(payload.replace(/-/g, '+').replace(/_/g, '/'));
+    const json = atob(payload.replace(/-/g, "+").replace(/_/g, "/"));
     const exp = JSON.parse(json)?.exp;
-    return typeof exp === 'number' ? exp : null;
+    return typeof exp === "number" ? exp : null;
   } catch {
     return null;
   }

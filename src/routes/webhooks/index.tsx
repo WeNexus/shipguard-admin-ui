@@ -1,4 +1,12 @@
-import { Badge, Banner, Button, InlineStack, Modal, Page, Text } from "@shopify/polaris";
+import {
+  Badge,
+  Banner,
+  Button,
+  InlineStack,
+  Modal,
+  Page,
+  Text,
+} from "@shopify/polaris";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ApiError, apiFetch } from "../../lib/api-client";
 import StoreSelect from "../../components/common/store-select";
@@ -30,7 +38,9 @@ export default function Webhooks() {
   const [selected, setSelected] = useState("");
   const [loadError, setLoadError] = useState<string | null>(null);
 
-  const [subscriptions, setSubscriptions] = useState<WebhookSubscriptionView[]>([]);
+  const [subscriptions, setSubscriptions] = useState<WebhookSubscriptionView[]>(
+    [],
+  );
   const [transport, setTransport] = useState<WebhookTransport | null>(null);
   const [listError, setListError] = useState<string | null>(null);
   const [listing, setListing] = useState(false);
@@ -86,15 +96,22 @@ export default function Webhooks() {
         }
         setTransport(result.transport);
         setSubscriptions(result.subscriptions);
-        setListError(result.ok ? null : (result.error ?? "The store could not be read."));
+        setListError(
+          result.ok ? null : (result.error ?? "The store could not be read."),
+        );
       })
       .catch((err) => {
-        if (controller.signal.aborted || (err as Error)?.name === "AbortError") {
+        if (
+          controller.signal.aborted ||
+          (err as Error)?.name === "AbortError"
+        ) {
           return;
         }
         setSubscriptions([]);
         setListError(
-          err instanceof ApiError ? err.message : "The subscriptions could not be loaded.",
+          err instanceof ApiError
+            ? err.message
+            : "The subscriptions could not be loaded.",
         );
       })
       .finally(() => {
@@ -129,7 +146,10 @@ export default function Webhooks() {
         setReport({
           ok: false,
           transport: transport ?? "pubsub",
-          error: err instanceof ApiError ? err.message : "The request could not be sent.",
+          error:
+            err instanceof ApiError
+              ? err.message
+              : "The request could not be sent.",
           before: [],
           after: [],
           deleted: [],
@@ -141,7 +161,9 @@ export default function Webhooks() {
       .finally(() => setResetting(false));
   };
 
-  const deletable = subscriptions.filter((subscription) => !subscription.isCompliance);
+  const deletable = subscriptions.filter(
+    (subscription) => !subscription.isCompliance,
+  );
   const busy = listing || resetting;
 
   return (
@@ -188,8 +210,9 @@ export default function Webhooks() {
           </Button>
           {transport && (
             <Text as="span" tone="subdued" variant="bodySm">
-              Will register on {transportLabel(transport)} — whatever the server's
-              WEBHOOK_TRANSPORT resolves to, exactly as app install does.
+              Will register on {transportLabel(transport)} — whatever the
+              server's WEBHOOK_TRANSPORT resolves to, exactly as app install
+              does.
             </Text>
           )}
         </InlineStack>
@@ -210,22 +233,30 @@ export default function Webhooks() {
           destructive: true,
           onAction: runReset,
         }}
-        secondaryActions={[{ content: "Cancel", onAction: () => setConfirming(false) }]}
+        secondaryActions={[
+          { content: "Cancel", onAction: () => setConfirming(false) },
+        ]}
       >
         <Modal.Section>
           <div className="flex flex-col gap-3">
             <Text as="p">
               This deletes <b>{deletable.length}</b> subscription
               {deletable.length === 1 ? "" : "s"} on{" "}
-              <span className="font-mono text-sm">{selected}</span>, then registers the standard set
-              again on {transport ? transportLabel(transport) : "the active transport"}.
+              <span className="font-mono text-sm">{selected}</span>, then
+              registers the standard set again on{" "}
+              {transport ? transportLabel(transport) : "the active transport"}.
             </Text>
             <Text as="p" tone="subdued">
-              The three GDPR compliance topics are never touched. PRODUCTS_UPDATE is deleted and not
-              re-created — <code>products/update</code> will stop arriving for this store.
+              The three GDPR compliance topics are never touched.
+              PRODUCTS_UPDATE is deleted and not re-created —{" "}
+              <code>products/update</code> will stop arriving for this store.
             </Text>
-            {subscriptions.some((subscription) => subscription.isCompliance) && (
-              <Badge tone="info">Compliance subscriptions will be left in place</Badge>
+            {subscriptions.some(
+              (subscription) => subscription.isCompliance,
+            ) && (
+              <Badge tone="info">
+                Compliance subscriptions will be left in place
+              </Badge>
             )}
           </div>
         </Modal.Section>

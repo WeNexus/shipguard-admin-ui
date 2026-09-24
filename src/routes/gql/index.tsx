@@ -58,7 +58,9 @@ export default function Gql() {
         // 400/404 land here (bad document length, unknown domain). Rendered in the same pane as a
         // failed run so there is one place to look.
         const message =
-          err instanceof ApiError ? err.message : "The request could not be sent.";
+          err instanceof ApiError
+            ? err.message
+            : "The request could not be sent.";
         setResult({ ok: false, data: null, errors: null, error: message });
       })
       .finally(() => setRunning(false));
@@ -93,7 +95,12 @@ export default function Gql() {
 
       <div className="mt-4">
         <InlineStack gap="300" blockAlign="center">
-          <Button variant="primary" onClick={run} loading={running} disabled={!selected}>
+          <Button
+            variant="primary"
+            onClick={run}
+            loading={running}
+            disabled={!selected}
+          >
             Run
           </Button>
         </InlineStack>

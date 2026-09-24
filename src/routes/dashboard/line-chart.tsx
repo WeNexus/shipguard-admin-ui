@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 
 function LineChartForDashboard({ lineData }: any) {
   const [Viz, setViz] = useState<typeof import("@shopify/polaris-viz") | null>(
-    null
+    null,
   );
 
   useEffect(() => {

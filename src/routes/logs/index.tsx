@@ -13,7 +13,7 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import useDebounce from "../../hooks/debounce";
 import { apiFetch } from "../../lib/api-client";
-import {TooltipCustom } from "./tooltip.tsx";
+import { TooltipCustom } from "./tooltip.tsx";
 
 const ActivityLogs = () => {
   const [data, setData] = useState<Record<any, any>[]>([]);
@@ -95,8 +95,8 @@ const ActivityLogs = () => {
            * - Database now stores data as pure JSON (previously it was double-stringified).
            * - This component now supports both formats and will not throw errors.
            */
-          if(typeof message !== "string") {
-            message = JSON.stringify(message)
+          if (typeof message !== "string") {
+            message = JSON.stringify(message);
           }
 
           return (
@@ -134,23 +134,18 @@ const ActivityLogs = () => {
               </IndexTable.Cell>
 
               <IndexTable.Cell>
-                <div style={{cursor: "pointer"}}>
-                  <TooltipCustom
-                    text={message as string}
-                    delay={400}
-                  >
+                <div style={{ cursor: "pointer" }}>
+                  <TooltipCustom text={message as string} delay={400}>
                     {truncate(message as string, 100)}...
                   </TooltipCustom>
                 </div>
-
-
               </IndexTable.Cell>
               <IndexTable.Cell>{date}</IndexTable.Cell>
             </IndexTable.Row>
           );
-        }
+        },
       ),
-    [data]
+    [data],
   );
 
   const emptyStateMarkup = (
@@ -234,11 +229,8 @@ const ActivityLogs = () => {
   );
 };
 
-function truncate(str:string, maxLength:number) {
-  return str.length > maxLength
-    ? str.slice(0, maxLength)
-    : str;
+function truncate(str: string, maxLength: number) {
+  return str.length > maxLength ? str.slice(0, maxLength) : str;
 }
-
 
 export default ActivityLogs;

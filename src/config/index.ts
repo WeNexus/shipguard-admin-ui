@@ -8,4 +8,5 @@ export const DEFAULT_SUSPEND_REASON = `Your account has been temporarily <b clas
  * production is the fallback. Only the public API host may be a `VITE_*` var — anything secret
  * (notably ADMIN_JWT_SECRET) stays server-side and must never reach this bundle.
  */
-export const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "https://shipguard.app";
+export const BASE_URL =
+  import.meta.env.VITE_API_BASE_URL ?? "https://shipguard.app";

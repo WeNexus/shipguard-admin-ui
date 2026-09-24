@@ -83,7 +83,7 @@ const SubscriberList = ({
     return stores?.map((store) => {
       const totalOrders = store.PackageProtectionOrders.length;
       const protectedOrders = store.PackageProtectionOrders.filter(
-        (e) => e.hasPackageProtection
+        (e) => e.hasPackageProtection,
       ).length;
       const unProtectedOrders =
         store.PackageProtectionOrders.length - protectedOrders;
@@ -94,7 +94,7 @@ const SubscriberList = ({
       }, 0).toFixed(2);
       const insuranceEarning = store.PackageProtectionOrders.reduce(
         (a, b) => a + parseFloat(b.protectionFee),
-        0
+        0,
       ).toFixed(2);
 
       const conversionRate = isNaN((protectedOrders / totalOrders) * 100)
@@ -156,7 +156,7 @@ const SubscriberList = ({
         totalProtectionOrders,
         totalUnprotectionOrders,
       },
-      index
+      index,
     ) => (
       <IndexTable.Row
         id={id}
@@ -183,7 +183,7 @@ const SubscriberList = ({
         <IndexTable.Cell>{createdAt}</IndexTable.Cell>
         <IndexTable.Cell>{status}</IndexTable.Cell>
       </IndexTable.Row>
-    )
+    ),
   );
 
   return (

@@ -24,7 +24,7 @@ const HideProduct = ({
     if (switchClick) {
       formData.append(
         "productHideSwitch",
-        !packageProtection?.productHideSwitch || false as any,
+        !packageProtection?.productHideSwitch || (false as any),
       );
     }
 

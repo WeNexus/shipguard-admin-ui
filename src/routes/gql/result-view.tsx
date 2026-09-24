@@ -24,7 +24,9 @@ export default function ResultView({ result }: ResultViewProps) {
   // button never receive a non-string.
   const body = result
     ? (JSON.stringify(
-        result.errors ? { data: result.data, errors: result.errors } : result.data,
+        result.errors
+          ? { data: result.data, errors: result.errors }
+          : result.data,
         null,
         2,
       ) ?? "null")
@@ -50,7 +52,9 @@ export default function ResultView({ result }: ResultViewProps) {
 
       {result && !result.ok && (
         <div className="mt-1">
-          <Banner tone="critical">{result.error ?? "The request failed."}</Banner>
+          <Banner tone="critical">
+            {result.error ?? "The request failed."}
+          </Banner>
         </div>
       )}
 

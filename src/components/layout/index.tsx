@@ -7,7 +7,7 @@ import {
   OrderIcon,
   PackageIcon,
   SettingsIcon,
-  StarIcon
+  StarIcon,
 } from "@shopify/polaris-icons";
 import Sidebar from "./sidebar";
 import TopBar from "./topbar";

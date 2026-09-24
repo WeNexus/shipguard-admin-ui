@@ -2,11 +2,11 @@ import { useState, useRef } from "react";
 
 type TooltipProps = {
   text: string;
-  children:any;
+  children: any;
   delay?: number;
 };
 
-export function TooltipCustom({ text, children, delay =0 }: TooltipProps) {
+export function TooltipCustom({ text, children, delay = 0 }: TooltipProps) {
   const [visible, setVisible] = useState(false);
   const timerRef = useRef<any>(null);
 

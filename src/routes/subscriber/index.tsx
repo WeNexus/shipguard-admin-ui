@@ -1,8 +1,11 @@
-import { Button, Link } from "@shopify/polaris";
+import { Button, Link, Text } from "@shopify/polaris";
 import SubscriberOrderList from "../orders/subscriber-order-list";
 import { ArrowLeftIcon } from "@shopify/polaris-icons";
 import SubscriberDetailsCart from "./subscriber-details-card";
 import AppControlCard from "./app-control-card";
+import SubscriberTabSelect, {
+  type SubscriberTabId,
+} from "./subscriber-tab-select";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { apiFetch } from "../../lib/api-client";
@@ -10,6 +13,7 @@ import type { IPackagePackageProtection, ProtectionOrderList } from "./type";
 import useDebounce from "../../hooks/debounce";
 
 const Subscriber = () => {
+  const [selectedTab, setSelectedTab] = useState<SubscriberTabId>("order");
   // The route param is the store DOMAIN, not an id. It was named `storeId` here and in the old API,
   // which is why the backend endpoint was renamed to `?domain=` (Phase 14) — see the note below.
   const { domain } = useParams<{ domain: string }>();
@@ -37,7 +41,7 @@ const Subscriber = () => {
       query: { domain, page, limit: 50, filter: filters, searchTerm },
     })
       .then((res) => {
-        setStore(res.store)
+        setStore(res.store);
         setOrders(res.orders);
         setPackageProtection(res.packageProtection);
         setStats(res.stats);
@@ -64,21 +68,30 @@ const Subscriber = () => {
         <div className="flex gap-2">
           {/* navigate(), not location.href — a full reload throws away the token-bearing SPA state
               and re-runs bootstrap for no reason. Keeps the hash router + GitHub Pages base path. */}
-          <Button
-            icon={ArrowLeftIcon}
-            onClick={() => navigate("/subscribers")}
-          ></Button>{" "}
+          <div className={"flex "}>
+            <Button
+              icon={ArrowLeftIcon}
+              onClick={() => navigate("/subscribers")}
+            ></Button>{" "}
+          </div>
+
           {/* From `store`, not `orders[0]`: a store with zero orders — or any active filter/search
               that returns no rows — used to show the generic fallback even though the response
               carries the real name. */}
-          <span className="text-2xl font-bold">
-            {store?.name ?? "Subscriber Details"}
-          </span>
+          <div className={"flex items-center"}>
+            <span className="text-2xl font-bold">
+              {store?.name ?? "Subscriber Details"}
+            </span>
+          </div>
         </div>
-        <div className="text-lg">
-          <span className="border px-2 py-1 rounded-lg shadow-sm">Plan</span>{" "}
-          <span className="bg-green-400 py-1 px-2 rounded-lg">Active</span>
-        </div>
+        <SubscriberTabSelect
+          selectedTab={selectedTab}
+          onSelect={setSelectedTab}
+        />
+        {/*<div className="text-lg">*/}
+        {/*  <span className="border px-2 py-1 rounded-lg shadow-sm">Plan</span>{" "}*/}
+        {/*  <span className="bg-green-400 py-1 px-2 rounded-lg">Active</span>*/}
+        {/*</div>*/}
       </div>
       <h2>
         Store domain:{" "}
@@ -87,33 +100,49 @@ const Subscriber = () => {
         </Link>
       </h2>
 
-      <br />
-      <div className="grid gird-cols-2 md:grid-cols-6 lg:grid-cols-11 xl:grid-cols-7 gap-4 ">
-        <div className="col-span-1 md:col-span-6 lg:col-span-7 xl:col-span-5">
-          <SubscriberDetailsCart
-            stats={stats}
-            moneyFormat={orders[0]?.Store.currencyCode ?? store?.currencyCode ?? ""}
-          />
+      {/*<SubscriberTabSelect*/}
+      {/*  selectedTab={selectedTab}*/}
+      {/*  onSelect={setSelectedTab}*/}
+      {/*/>*/}
+
+      {selectedTab !== "order" ? (
+        <div className="border rounded-lg shadow p-10 text-center">
+          <Text as="p" variant="headingLg" tone="subdued">
+            Coming Soon
+          </Text>
         </div>
-        <div className="col-span-1 md:col-span-6 lg:col-span-4 xl:col-span-2">
-          <AppControlCard
-            packageProtection={packageProtection}
-            setReFetch={setReFetch}
-            store={store}
+      ) : (
+        <>
+          <div className="grid gird-cols-2 md:grid-cols-6 lg:grid-cols-11 xl:grid-cols-7 gap-4 ">
+            <div className="col-span-1 md:col-span-6 lg:col-span-7 xl:col-span-5">
+              <SubscriberDetailsCart
+                stats={stats}
+                moneyFormat={
+                  orders[0]?.Store.currencyCode ?? store?.currencyCode ?? ""
+                }
+              />
+            </div>
+            <div className="col-span-1 md:col-span-6 lg:col-span-4 xl:col-span-2">
+              <AppControlCard
+                packageProtection={packageProtection}
+                setReFetch={setReFetch}
+                store={store}
+              />
+            </div>
+          </div>
+          <br />
+          <SubscriberOrderList
+            orders={orders}
+            pagination={pagination}
+            loading={loading}
+            setPage={setPage}
+            page={page}
+            setFilters={setFilters}
+            setQueryValue={setQueryValue}
+            queryValue={queryValue}
           />
-        </div>
-      </div>
-      <br />
-      <SubscriberOrderList
-        orders={orders}
-        pagination={pagination}
-        loading={loading}
-        setPage={setPage}
-        page={page}
-        setFilters={setFilters}
-        setQueryValue={setQueryValue}
-        queryValue={queryValue}
-      />
+        </>
+      )}
     </div>
   );
 };

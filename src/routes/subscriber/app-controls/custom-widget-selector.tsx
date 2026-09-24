@@ -30,7 +30,7 @@ const CustomWidgetSelector = ({
     if (switchClick) {
       formData.append(
         "customSelector",
-        !packageProtection?.defaultSetting || false as any,
+        !packageProtection?.defaultSetting || (false as any),
       );
     }
 

@@ -138,7 +138,9 @@ const Suspend = ({ store, setReFetch }: { store: any; setReFetch: any }) => {
       setReFetch((prev: boolean) => !prev);
     } catch (err) {
       console.error("Failed to update suspension reason:", err);
-      setEditSuspendReasonError("Could not update the reason. Please try again.");
+      setEditSuspendReasonError(
+        "Could not update the reason. Please try again.",
+      );
     } finally {
       setEditSuspendReasonLoading(false);
     }

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import {Button, ButtonGroup} from "@shopify/polaris";
+import { Button, ButtonGroup } from "@shopify/polaris";
 import SwitchWithLoading from "../../components/common/switch-with-loading";
 import type { IPackagePackageProtection } from "./type";
 import { apiFetch } from "../../lib/api-client";
@@ -174,10 +174,10 @@ const AppControlCard = ({
       className=" rounded-lg shadow-sm p-4 h-full"
       style={{ backgroundColor: "#b6d6ff" }}
     >
-      <div className={'flex justify-between'}>
+      <div className={"flex justify-between"}>
         <span className="text-lg font-bold">App Control</span>
 
-        <ButtonGroup variant={'segmented'}>
+        <ButtonGroup variant={"segmented"}>
           <Button
             pressed={selectedTab === "basic"}
             onClick={() => setSelectedTab("basic")}
@@ -195,135 +195,136 @@ const AppControlCard = ({
       </div>
 
       {selectedTab === "basic" && (
-      <>
-      <div className="flex justify-between mt-2">
-        <span className="text-lg">Cart Widget Enable</span>
-        {packageProtection && (
-          <SwitchWithLoading
-            switchOn={packageProtection?.enabled}
-            handleSwitch={handleWidgetEnable}
-            isLoading={loading}
+        <>
+          <div className="flex justify-between mt-2">
+            <span className="text-lg">Cart Widget Enable</span>
+            {packageProtection && (
+              <SwitchWithLoading
+                switchOn={packageProtection?.enabled}
+                handleSwitch={handleWidgetEnable}
+                isLoading={loading}
+              />
+            )}
+          </div>
+
+          <div className="flex justify-between my-3">
+            <span className="text-lg">Cart Auto Protection</span>
+            {packageProtection && (
+              <SwitchWithLoading
+                switchOn={!!packageProtection?.cartWidgetPreselected}
+                handleSwitch={handleAutoProtection}
+                isLoading={autoLoading}
+              />
+            )}
+          </div>
+
+          <div className="flex justify-between mt-2">
+            <span className="text-lg">Checkout Widget Enable</span>
+            {packageProtection && (
+              <SwitchWithLoading
+                switchOn={packageProtection?.checkoutEnable}
+                handleSwitch={handleCheckoutWidgetEnable}
+                isLoading={checkoutWidgetEnableLoading}
+              />
+            )}
+          </div>
+
+          <div className="flex justify-between my-3">
+            <span className="text-lg">Checkout Auto Protection</span>
+            {packageProtection && (
+              <SwitchWithLoading
+                switchOn={!!packageProtection?.checkoutWidgetPreselected}
+                handleSwitch={handleCheckoutAutoProtection}
+                isLoading={checkoutWidgetAutoProtectionLoading}
+              />
+            )}
+          </div>
+
+          <div className="flex justify-between my-3">
+            <span className="text-lg">Store Front Log</span>
+            {packageProtection && (
+              <SwitchWithLoading
+                switchOn={packageProtection?.storeFrontLog}
+                handleSwitch={handleStoreFrontLog}
+                isLoading={storeFrontLogLoading}
+              />
+            )}
+          </div>
+
+          <HideProduct
+            packageProtection={packageProtection}
+            setReFetch={setReFetch}
           />
-        )}
-      </div>
 
-      <div className="flex justify-between my-3">
-        <span className="text-lg">Cart Auto Protection</span>
-        {packageProtection && (
-          <SwitchWithLoading
-            switchOn={!!packageProtection?.cartWidgetPreselected}
-            handleSwitch={handleAutoProtection}
-            isLoading={autoLoading}
+          <CustomWidgetSelector
+            packageProtection={packageProtection}
+            setReFetch={setReFetch}
           />
-        )}
-      </div>
 
-      <div className="flex justify-between mt-2">
-        <span className="text-lg">Checkout Widget Enable</span>
-        {packageProtection && (
-          <SwitchWithLoading
-            switchOn={packageProtection?.checkoutEnable}
-            handleSwitch={handleCheckoutWidgetEnable}
-            isLoading={checkoutWidgetEnableLoading}
-          />
-        )}
-      </div>
+          <Suspend store={store} setReFetch={setReFetch} />
 
-      <div className="flex justify-between my-3">
-        <span className="text-lg">Checkout Auto Protection</span>
-        {packageProtection && (
-          <SwitchWithLoading
-            switchOn={!!packageProtection?.checkoutWidgetPreselected}
-            handleSwitch={handleCheckoutAutoProtection}
-            isLoading={checkoutWidgetAutoProtectionLoading}
-          />
-        )}
-      </div>
-
-      <div className="flex justify-between my-3">
-        <span className="text-lg">Store Front Log</span>
-        {packageProtection && (
-          <SwitchWithLoading
-            switchOn={packageProtection?.storeFrontLog}
-            handleSwitch={handleStoreFrontLog}
-            isLoading={storeFrontLogLoading}
-          />
-        )}
-      </div>
-
-      <HideProduct
-        packageProtection={packageProtection}
-        setReFetch={setReFetch}
-      />
-
-      <CustomWidgetSelector
-        packageProtection={packageProtection}
-        setReFetch={setReFetch}
-      />
-
-      <Suspend store={store} setReFetch={setReFetch} />
-
-      {/* Uninstall */}
-      <div className="flex justify-between my-1 items-center">
-        <span className="text-lg">Uninstall</span>
-        <Button
-          size="slim"
-          variant="primary"
-          tone="critical"
-          onClick={() => {
-            setConfirmDomainInput("");
-            setUninstallError(null);
-            setUninstallModalOpen(true);
-          }}
-          loading={uninstallLoading}
-          disabled={uninstallPending || !!store?.uninstalledAt}
-        >
-          {store?.uninstalledAt
-            ? "Uninstalled"
-            : uninstallPending
-              ? "Uninstalling…"
-              : "Uninstall app"}
-        </Button>
-      </div>
-
-      <Modal
-        open={uninstallModalOpen}
-        onClose={() => !uninstallLoading && setUninstallModalOpen(false)}
-        title="Uninstall this app"
-        primaryAction={{
-          content: "Uninstall",
-          destructive: true,
-          onAction: handleConfirmUninstall,
-          loading: uninstallLoading,
-        }}
-        secondaryActions={[
-          {
-            content: "Cancel",
-            onAction: () => setUninstallModalOpen(false),
-            disabled: uninstallLoading,
-          },
-        ]}
-      >
-        <Modal.Section>
-          <TextContainer>
-            <p>
-              This uninstalls the app from <b>{store?.domain}</b> on Shopify. It cannot be undone from
-              here — the merchant would have to reinstall.
-            </p>
-            <TextField
-              label={`Type "${store?.domain}" to confirm`}
-              autoComplete="off"
-              value={confirmDomainInput}
-              onChange={(value) => {
-                setConfirmDomainInput(value);
-                if (uninstallError) setUninstallError(null);
+          {/* Uninstall */}
+          <div className="flex justify-between my-1 items-center">
+            <span className="text-lg">Uninstall</span>
+            <Button
+              size="slim"
+              variant="primary"
+              tone="critical"
+              onClick={() => {
+                setConfirmDomainInput("");
+                setUninstallError(null);
+                setUninstallModalOpen(true);
               }}
-              error={uninstallError || undefined}
-            />
-          </TextContainer>
-        </Modal.Section>
-      </Modal>
-      </>
+              loading={uninstallLoading}
+              disabled={uninstallPending || !!store?.uninstalledAt}
+            >
+              {store?.uninstalledAt
+                ? "Uninstalled"
+                : uninstallPending
+                  ? "Uninstalling…"
+                  : "Uninstall app"}
+            </Button>
+          </div>
+
+          <Modal
+            open={uninstallModalOpen}
+            onClose={() => !uninstallLoading && setUninstallModalOpen(false)}
+            title="Uninstall this app"
+            primaryAction={{
+              content: "Uninstall",
+              destructive: true,
+              onAction: handleConfirmUninstall,
+              loading: uninstallLoading,
+            }}
+            secondaryActions={[
+              {
+                content: "Cancel",
+                onAction: () => setUninstallModalOpen(false),
+                disabled: uninstallLoading,
+              },
+            ]}
+          >
+            <Modal.Section>
+              <TextContainer>
+                <p>
+                  This uninstalls the app from <b>{store?.domain}</b> on
+                  Shopify. It cannot be undone from here — the merchant would
+                  have to reinstall.
+                </p>
+                <TextField
+                  label={`Type "${store?.domain}" to confirm`}
+                  autoComplete="off"
+                  value={confirmDomainInput}
+                  onChange={(value) => {
+                    setConfirmDomainInput(value);
+                    if (uninstallError) setUninstallError(null);
+                  }}
+                  error={uninstallError || undefined}
+                />
+              </TextContainer>
+            </Modal.Section>
+          </Modal>
+        </>
       )}
 
       {selectedTab === "subscription" && (

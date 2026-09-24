@@ -1,5 +1,5 @@
-import { BASE_URL } from '../config';
-import { clearAuth, getToken } from './auth-storage';
+import { BASE_URL } from "../config";
+import { clearAuth, getToken } from "./auth-storage";
 
 /**
  * The single place every backend call goes through.
@@ -24,7 +24,7 @@ export type QueryValue = string | number | boolean | null | undefined;
 export type ApiJson = any;
 
 export interface ApiFetchOptions {
-  method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+  method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
   /** Serialized to a query string; `null`/`undefined` entries are dropped. */
   query?: Record<string, QueryValue>;
   /** Plain object → JSON. `FormData` → sent as-is (see the Content-Type note below). */
@@ -47,8 +47,12 @@ export class ApiError extends Error {
   readonly payload: unknown;
 
   constructor(status: number, payload: unknown, message?: string) {
-    super(message ?? extractMessage(payload) ?? `Request failed with status ${status}`);
-    this.name = 'ApiError';
+    super(
+      message ??
+        extractMessage(payload) ??
+        `Request failed with status ${status}`,
+    );
+    this.name = "ApiError";
     this.status = status;
     this.payload = payload;
   }
@@ -56,12 +60,12 @@ export class ApiError extends Error {
 
 /** Pull the most human-readable string out of a Nest error body. */
 function extractMessage(payload: unknown): string | undefined {
-  if (payload && typeof payload === 'object') {
+  if (payload && typeof payload === "object") {
     const message = (payload as { message?: unknown }).message;
-    if (typeof message === 'string') {
+    if (typeof message === "string") {
       return message;
     }
-    if (Array.isArray(message) && typeof message[0] === 'string') {
+    if (Array.isArray(message) && typeof message[0] === "string") {
       return message[0];
     }
   }
@@ -70,7 +74,7 @@ function extractMessage(payload: unknown): string | undefined {
 
 function buildQuery(query?: Record<string, QueryValue>): string {
   if (!query) {
-    return '';
+    return "";
   }
   const params = new URLSearchParams();
   for (const [key, value] of Object.entries(query)) {
@@ -81,7 +85,7 @@ function buildQuery(query?: Record<string, QueryValue>): string {
     }
   }
   const qs = params.toString();
-  return qs ? `?${qs}` : '';
+  return qs ? `?${qs}` : "";
 }
 
 /**
@@ -96,21 +100,21 @@ function redirectToLogin(): void {
   if (redirecting) {
     return;
   }
-  if (window.location.hash.startsWith('#/login')) {
+  if (window.location.hash.startsWith("#/login")) {
     return; // already there — never loop
   }
   redirecting = true;
-  window.location.hash = '#/login';
+  window.location.hash = "#/login";
 }
 
 export async function apiFetch<T = ApiJson>(
   path: string,
   options: ApiFetchOptions = {},
 ): Promise<T> {
-  const { method = 'GET', query, body, signal, background = false } = options;
-  const url = `${API_BASE}/${path.replace(/^\/+/, '')}${buildQuery(query)}`;
+  const { method = "GET", query, body, signal, background = false } = options;
+  const url = `${API_BASE}/${path.replace(/^\/+/, "")}${buildQuery(query)}`;
 
-  const headers: Record<string, string> = { Accept: 'application/json' };
+  const headers: Record<string, string> = { Accept: "application/json" };
 
   const token = getToken();
   if (token) {
@@ -123,7 +127,7 @@ export async function apiFetch<T = ApiJson>(
     // Setting it by hand produces a body the server cannot parse.
     payload = body;
   } else if (body !== undefined) {
-    headers['Content-Type'] = 'application/json';
+    headers["Content-Type"] = "application/json";
     payload = JSON.stringify(body);
   }
 

@@ -50,7 +50,8 @@ export default function ResetReport({ report }: ResetReportProps) {
           <List>
             {report.deleteFailures.map((failure) => (
               <List.Item key={failure.id}>
-                <span className="font-mono text-xs">{failure.topic}</span> — {failure.error}
+                <span className="font-mono text-xs">{failure.topic}</span> —{" "}
+                {failure.error}
               </List.Item>
             ))}
           </List>
@@ -62,8 +63,8 @@ export default function ResetReport({ report }: ResetReportProps) {
           {/* Derived by re-reading Shopify after the run, so this is what is actually registered —
               not what the mutations claimed. A topic here has no subscription at all right now. */}
           <p className="mb-2">
-            These were expected after the reset but are absent from the store. Re-run, or check the
-            server logs for the registration pass.
+            These were expected after the reset but are absent from the store.
+            Re-run, or check the server logs for the registration pass.
           </p>
           <List>
             {report.missing.map((topic) => (

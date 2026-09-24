@@ -69,7 +69,9 @@ const Dashboard = () => {
       <div className="p-6 pb-0 flex gap-4 items-center justify-between bg-gray-50">
         <DateRangePicker setActiveDates={setActiveDates} />
         {/* The webhook reset has no sidebar entry — this is its only entry point. */}
-        <Button onClick={() => navigate("/webhooks")}>Re-register webhooks</Button>
+        <Button onClick={() => navigate("/webhooks")}>
+          Re-register webhooks
+        </Button>
       </div>
       <div className="p-4 md:p-6 bg-gray-50">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-6">

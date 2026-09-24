@@ -13,7 +13,7 @@ import { apiFetch } from "./api-client";
 
 export type StoreTarget = { storeId?: string; domain?: string };
 
-const post = <T = unknown,>(path: string, body: unknown) =>
+const post = <T = unknown>(path: string, body: unknown) =>
   apiFetch<T>(`admin/store-control/${path}`, { method: "POST", body });
 
 /** Suspend a store. `reason` may contain HTML — it is what the merchant is shown. */

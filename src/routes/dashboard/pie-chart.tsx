@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 const PieChart = ({ pieData }: any) => {
   const [Viz, setViz] = useState<typeof import("@shopify/polaris-viz") | null>(
-    null
+    null,
   );
 
   useEffect(() => {

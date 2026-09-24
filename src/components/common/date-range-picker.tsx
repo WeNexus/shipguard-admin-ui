@@ -25,7 +25,7 @@ const DateRangePicker = ({
   const shouldShowMultiMonth = mdUp;
   const today = new Date(new Date().setHours(0, 0, 0, 0));
   const yesterday = new Date(
-    new Date(new Date().setDate(today.getDate() - 1)).setHours(0, 0, 0, 0)
+    new Date(new Date().setDate(today.getDate() - 1)).setHours(0, 0, 0, 0),
   );
   const ranges = [
     {
@@ -49,7 +49,12 @@ const DateRangePicker = ({
       alias: "last7days",
       period: {
         since: new Date(
-          new Date(new Date().setDate(today.getDate() - 7)).setHours(0, 0, 0, 0)
+          new Date(new Date().setDate(today.getDate() - 7)).setHours(
+            0,
+            0,
+            0,
+            0,
+          ),
         ),
         until: yesterday,
       },
@@ -63,8 +68,8 @@ const DateRangePicker = ({
             0,
             0,
             0,
-            0
-          )
+            0,
+          ),
         ),
         until: yesterday,
       },
@@ -78,8 +83,8 @@ const DateRangePicker = ({
             0,
             0,
             0,
-            0
-          )
+            0,
+          ),
         ),
         until: yesterday,
       },
@@ -242,7 +247,7 @@ const DateRangePicker = ({
         {
           year: activeDateRange.period.until.getFullYear(),
           month: activeDateRange.period.until.getMonth(),
-        }
+        },
       );
       if (monthDifference > 1 || monthDifference < 0) {
         setDate({
@@ -301,7 +306,7 @@ const DateRangePicker = ({
                   labelHidden
                   onChange={(value) => {
                     const result = ranges.find(
-                      ({ title, alias }) => title === value || alias === value
+                      ({ title, alias }) => title === value || alias === value,
                     );
                     result && setActiveDateRange(result);
                   }}
@@ -318,7 +323,7 @@ const DateRangePicker = ({
                     selected={[activeDateRange.alias]}
                     onChange={(value) => {
                       setActiveDateRange(
-                        ranges.find((range) => range.alias === value[0])!
+                        ranges.find((range) => range.alias === value[0])!,
                       );
                     }}
                   />

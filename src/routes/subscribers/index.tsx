@@ -46,7 +46,7 @@ const Subscribers = () => {
     return data?.map((order: any) => {
       const totalOrders = order.PackageProtectionOrders.length;
       const protectedOrders = order.PackageProtectionOrders.filter(
-        (e: any) => e.hasPackageProtection
+        (e: any) => e.hasPackageProtection,
       ).length;
       const unProtectedOrders =
         order.PackageProtectionOrders.length - protectedOrders;
@@ -56,11 +56,11 @@ const Subscribers = () => {
             ? sum + parseFloat(order.orderAmount)
             : sum;
         },
-        0
+        0,
       ).toFixed(2);
       const insuranceEarning = order.PackageProtectionOrders.reduce(
         (a: any, b: any) => a + parseFloat(b.protectionFee),
-        0
+        0,
       ).toFixed(2);
 
       const conversionRate = isNaN((protectedOrders / totalOrders) * 100)

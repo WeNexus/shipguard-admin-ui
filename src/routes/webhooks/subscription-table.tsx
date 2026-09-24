@@ -1,4 +1,10 @@
-import { Badge, Card, EmptyState, SkeletonBodyText, Text } from "@shopify/polaris";
+import {
+  Badge,
+  Card,
+  EmptyState,
+  SkeletonBodyText,
+  Text,
+} from "@shopify/polaris";
 import type { WebhookSubscriptionView, WebhookTransport } from "./type";
 import { transportLabel } from "./type";
 
@@ -60,8 +66,8 @@ export default function SubscriptionTable({
           {/* Not an error state: a store with nothing registered is exactly what this screen fixes,
               so the action stays available rather than being disabled behind a warning. */}
           <p>
-            This store has no webhook subscriptions registered for the app. Re-registering will
-            create them.
+            This store has no webhook subscriptions registered for the app.
+            Re-registering will create them.
           </p>
         </EmptyState>
       </Card>
@@ -93,17 +99,30 @@ export default function SubscriptionTable({
           </thead>
           <tbody>
             {subscriptions.map((subscription) => (
-              <tr key={subscription.id} className="border-b border-gray-100 align-top">
+              <tr
+                key={subscription.id}
+                className="border-b border-gray-100 align-top"
+              >
                 <td className="py-2 pr-4">
                   <div className="flex items-center gap-2">
-                    <span className="font-mono text-xs">{subscription.topic}</span>
-                    {subscription.isCompliance && <Badge tone="info">Protected</Badge>}
+                    <span className="font-mono text-xs">
+                      {subscription.topic}
+                    </span>
+                    {subscription.isCompliance && (
+                      <Badge tone="info">Protected</Badge>
+                    )}
                   </div>
                 </td>
                 <td className="py-2 pr-4">
                   {/* The signal the screen exists for: a row whose delivery method no longer matches
                       the active transport is one nothing on our side is listening to. */}
-                  <Badge tone={subscription.matchesActiveTransport ? "success" : "warning"}>
+                  <Badge
+                    tone={
+                      subscription.matchesActiveTransport
+                        ? "success"
+                        : "warning"
+                    }
+                  >
                     {subscription.kind}
                   </Badge>
                 </td>

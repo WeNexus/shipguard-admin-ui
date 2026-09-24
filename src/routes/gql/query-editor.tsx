@@ -17,7 +17,11 @@ interface QueryEditorProps {
  * marks every field as unknown. We have no schema here (the target is a different merchant's shop on
  * every run), so the choice is honest highlighting or a wall of false errors.
  */
-export default function QueryEditor({ value, onChange, disabled }: QueryEditorProps) {
+export default function QueryEditor({
+  value,
+  onChange,
+  disabled,
+}: QueryEditorProps) {
   return (
     <>
       <Text as="h2" variant="headingSm">

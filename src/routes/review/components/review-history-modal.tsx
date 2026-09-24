@@ -1,54 +1,55 @@
-import {
-  Modal, IndexTable,
-  Text,
-  Box,
-  BlockStack,
-} from '@shopify/polaris';
-import { useEffect, useState, useMemo } from 'react';
-import type { UseStateData } from '../hooks/use-state-data';
-import type { StateData } from '..';
-import { apiFetch } from '../../../lib/api-client';
-import { Scrollable } from '@shopify/polaris';
+import { Modal, IndexTable, Text, Box, BlockStack } from "@shopify/polaris";
+import { useEffect, useState, useMemo } from "react";
+import type { UseStateData } from "../hooks/use-state-data";
+import type { StateData } from "..";
+import { apiFetch } from "../../../lib/api-client";
+import { Scrollable } from "@shopify/polaris";
 
 interface ApiResponse {
-  analyticsId: string
-  storeId: string
-  initialBannerReview?: number
-  feedbackMessage?: string
-  activitySummary?: string
-  historyCreatedAt: string | null
+  analyticsId: string;
+  storeId: string;
+  initialBannerReview?: number;
+  feedbackMessage?: string;
+  activitySummary?: string;
+  historyCreatedAt: string | null;
 }
 
-export function ReviewHistoryModal({ formState }: { formState: UseStateData<StateData> }) {
+export function ReviewHistoryModal({
+  formState,
+}: {
+  formState: UseStateData<StateData>;
+}) {
   const [data, setData] = useState<ApiResponse[]>([]);
-  const [modalLoading, setModalLoading] = useState<boolean>(true)
-  const [loadError, setLoadError] = useState<string | null>(null)
+  const [modalLoading, setModalLoading] = useState<boolean>(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   useEffect(() => {
-    const invalidStoreId = !formState.state.storeId
+    const invalidStoreId = !formState.state.storeId;
     if (invalidStoreId) return;
 
     // Clear the previous store's rows, or opening store B briefly shows store A's history.
-    setData([])
-    setLoadError(null)
+    setData([]);
+    setLoadError(null);
 
     // Mode A — history for one store. `storeId` here is Store.id (a cuid), which is what the
     // list rows carry; note "storeId" means a DOMAIN elsewhere in this UI (see the subscriber page).
-    apiFetch("admin/api/review", { query: { store_id: formState.state.storeId } })
-      .then(res => {
+    apiFetch("admin/api/review", {
+      query: { store_id: formState.state.storeId },
+    })
+      .then((res) => {
         // An empty array is a valid answer (store with no activity), not an error.
-        setData(res?.data ?? [])
+        setData(res?.data ?? []);
       })
-      .catch(err => {
+      .catch((err) => {
         // Without this the promise rejected silently and `modalLoading` stayed true forever —
         // the modal just span.
-        console.error("Failed to load review history:", err)
-        setLoadError("Could not load this store's review history.")
+        console.error("Failed to load review history:", err);
+        setLoadError("Could not load this store's review history.");
       })
       .finally(() => {
-        setTimeout(() => setModalLoading(false), 500)
-      })
-  }, [formState.state.showModal, formState.state.storeId])
+        setTimeout(() => setModalLoading(false), 500);
+      });
+  }, [formState.state.showModal, formState.state.storeId]);
 
   return (
     <>
@@ -57,15 +58,14 @@ export function ReviewHistoryModal({ formState }: { formState: UseStateData<Stat
         open={formState.state.showModal}
         onClose={() => {
           /** reset the modal loading which prepares for next data load animation */
-          setModalLoading(true)
+          setModalLoading(true);
 
           setTimeout(() => {
-            formState.addChange({ showModal: false })
-          }, 100)
-
+            formState.addChange({ showModal: false });
+          }, 100);
         }}
         loading={modalLoading}
-        size='large'
+        size="large"
       >
         {/**
          * Modal has adjustable height. Due to this, index table was rendering in a absurd way.
@@ -74,10 +74,12 @@ export function ReviewHistoryModal({ formState }: { formState: UseStateData<Stat
          * which fix the douber heading rendering issue caused by CSS & adjustable height
          *
          */}
-        <Scrollable style={{ height: '300px' }}>
+        <Scrollable style={{ height: "300px" }}>
           {loadError ? (
             <Box paddingBlock="400">
-              <Text as="p" tone="critical" alignment="center">{loadError}</Text>
+              <Text as="p" tone="critical" alignment="center">
+                {loadError}
+              </Text>
             </Box>
           ) : (
             <IndexTableComponent data={data} />
@@ -85,26 +87,24 @@ export function ReviewHistoryModal({ formState }: { formState: UseStateData<Stat
         </Scrollable>
       </Modal>
     </>
-  )
+  );
 }
 
 const IndexTableComponent = ({ data }: { data: ApiResponse[] }) => {
-
   const resourceName = {
-    singular: 'order',
-    plural: 'orders',
+    singular: "order",
+    plural: "orders",
   };
 
   const row = useMemo(() => {
-    return data.map(eachData => {
+    return data.map((eachData) => {
       return {
         date: eachData.historyCreatedAt,
         activitySummary: eachData.activitySummary || "Not available",
-        initialBannerReview: eachData.initialBannerReview || "Not Given"
-      }
-    })
-  }, [data])
-
+        initialBannerReview: eachData.initialBannerReview || "Not Given",
+      };
+    });
+  }, [data]);
 
   const rowMarkup = useMemo(() => {
     return row.map((eachRow, index) => (
@@ -114,16 +114,15 @@ const IndexTableComponent = ({ data }: { data: ApiResponse[] }) => {
         position={index}
       >
         <IndexTable.Cell>
-          <Text fontWeight="bold" as="span" alignment='center'>
+          <Text fontWeight="bold" as="span" alignment="center">
             {formatDate(eachRow.date)}
           </Text>
         </IndexTable.Cell>
 
         <IndexTable.Cell>
-          <Text fontWeight="bold" as="span" alignment='center'>
+          <Text fontWeight="bold" as="span" alignment="center">
             {eachRow.initialBannerReview}
           </Text>
-
         </IndexTable.Cell>
 
         <IndexTable.Cell>
@@ -132,8 +131,8 @@ const IndexTableComponent = ({ data }: { data: ApiResponse[] }) => {
           </Text>
         </IndexTable.Cell>
       </IndexTable.Row>
-    ))
-  }, [data])
+    ));
+  }, [data]);
 
   return (
     <Box paddingBlockEnd="400">
@@ -143,16 +142,17 @@ const IndexTableComponent = ({ data }: { data: ApiResponse[] }) => {
           itemCount={row.length}
           selectable={false}
           headings={[
-            { title: 'Time', alignment: "center" },
-            { title: 'Initial Banner Review', alignment: "center" },
-            { title: 'Feedback Message', alignment: "start" },
+            { title: "Time", alignment: "center" },
+            { title: "Initial Banner Review", alignment: "center" },
+            { title: "Feedback Message", alignment: "start" },
           ]}
         >
           {rowMarkup}
         </IndexTable>
       </BlockStack>
-    </Box>)
-}
+    </Box>
+  );
+};
 
 /**
  * Format a timestamp for display, degrading to a dash on anything unusable.
@@ -172,7 +172,7 @@ function formatDate(date: string | null | undefined) {
   }
 
   // Helper to pad numbers to 2 digits
-  const pad = (num: number) => num.toString().padStart(2, '0');
+  const pad = (num: number) => num.toString().padStart(2, "0");
 
   const day = pad(dateObject.getDate());
   const month = pad(dateObject.getMonth() + 1); // months are 0-indexed

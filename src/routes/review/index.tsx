@@ -1,29 +1,31 @@
-import {Badge, Banner, Page} from "@shopify/polaris"
-import {useEffect, useMemo} from "react";
+import { Badge, Banner, Page } from "@shopify/polaris";
+import { useEffect, useMemo } from "react";
 import { apiFetch } from "../../lib/api-client";
 import { ReviewStatisticsData } from "./components/data-table.tsx";
 import { useStateData } from "./hooks/use-state-data.ts";
 import { ReviewHistoryModal } from "./components/review-history-modal.tsx";
 
-export type ReviewProps = {
-  data: {
-    Store: {
-      domain:string
-    },
-    storeId: string,
-    feedbackMessage: string,
-    firstBannerClickCount: number,
-    initialBannerReview:number,
-    lastShowedAt: string // iso String date
-    merchantEmail: string,
-  }[],
-  totalPage: number,
-  totalData: number
-} | undefined
+export type ReviewProps =
+  | {
+      data: {
+        Store: {
+          domain: string;
+        };
+        storeId: string;
+        feedbackMessage: string;
+        firstBannerClickCount: number;
+        initialBannerReview: number;
+        lastShowedAt: string; // iso String date
+        merchantEmail: string;
+      }[];
+      totalPage: number;
+      totalData: number;
+    }
+  | undefined;
 
 export interface StateData {
-  reviewData?: ReviewProps
-  currentPage: number
+  reviewData?: ReviewProps;
+  currentPage: number;
 
   /**
    *
@@ -46,7 +48,7 @@ export interface StateData {
    *
    * NOTE: storeId and showModal works together
    */
-  showModal: boolean
+  showModal: boolean;
 }
 
 export default function () {
@@ -57,44 +59,41 @@ export default function () {
       storeId: null,
       showModal: false,
       loadError: null,
-    }
-  }, [])
+    };
+  }, []);
 
-  const formState = useStateData<StateData>({initialData})
+  const formState = useStateData<StateData>({ initialData });
 
   useEffect(() => {
     // Mode C — first page. The backend caps this at 50 rows/page (PER_PAGE), so despite the
     // "fetch all at once" shape this is genuinely paginated; Next/Previous refetch by page.
     apiFetch("admin/api/review")
       .then((data) => {
-        formState.addChange({ reviewData: data, loadError: null })
+        formState.addChange({ reviewData: data, loadError: null });
       })
       .catch((err) => {
-        console.error("Failed to load review statistics:", err)
-        formState.addChange({ loadError: "Failed to load review statistics." })
-      })
+        console.error("Failed to load review statistics:", err);
+        formState.addChange({ loadError: "Failed to load review statistics." });
+      });
   }, []);
 
   // @ts-ignore
   return (
     <Page fullWidth={true} title={"Reviews Statistics"}>
-      <ReviewHistoryModal formState={formState}/>
+      <ReviewHistoryModal formState={formState} />
       {formState.state.loadError && (
-        <div style={{marginBottom: "12px"}}>
+        <div style={{ marginBottom: "12px" }}>
           <Banner tone="critical">{formState.state.loadError}</Banner>
         </div>
       )}
       <PageStats data={formState.state.reviewData} />
-      <div style={{marginBottom: "20px"}}></div>
+      <div style={{ marginBottom: "20px" }}></div>
       <ReviewStatisticsData formState={formState} />
     </Page>
-  )
+  );
 }
 
-
-function PageStats({
-  data
-}: { data: ReviewProps }) {
+function PageStats({ data }: { data: ReviewProps }) {
   return (
     <>
       {/*@ts-ignore*/}
@@ -102,5 +101,5 @@ function PageStats({
       {/*@ts-ignore*/}
       <Badge tone={"warning"}>Total Data: {data?.totalData || 0}</Badge>
     </>
-  )
+  );
 }

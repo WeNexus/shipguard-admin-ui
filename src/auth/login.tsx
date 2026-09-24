@@ -3,8 +3,10 @@ import { useNavigate } from "react-router";
 import { apiFetch, ApiError } from "../lib/api-client";
 // aliased: this component already has a local `setEmail` state setter for the input field.
 import { setEmail as persistEmail, setToken } from "../lib/auth-storage";
-const googleLogo = "https://shipguard.nyc3.cdn.digitaloceanspaces.com/ShipGuard-Widget-Assets/assets/Logo-google-icon-PNG.png";
-const appLogo = 'https://shipguard.nyc3.cdn.digitaloceanspaces.com/ShipGuard-Widget-Assets/app-logo/Inhouse-Shipping-Protection.png'
+const googleLogo =
+  "https://shipguard.nyc3.cdn.digitaloceanspaces.com/ShipGuard-Widget-Assets/assets/Logo-google-icon-PNG.png";
+const appLogo =
+  "https://shipguard.nyc3.cdn.digitaloceanspaces.com/ShipGuard-Widget-Assets/app-logo/Inhouse-Shipping-Protection.png";
 
 const Login = () => {
   const navigate = useNavigate();

@@ -11,7 +11,9 @@ import type { StoreOption } from "./type";
 const MAX_VISIBLE = 50;
 
 function labelFor(store: StoreOption): string {
-  return store.name === store.domain ? store.domain : `${store.name} — ${store.domain}`;
+  return store.name === store.domain
+    ? store.domain
+    : `${store.name} — ${store.domain}`;
 }
 
 interface StoreSelectProps {

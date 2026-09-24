@@ -3,5 +3,5 @@
 # native binaries this repo genuinely needs to compile Tailwind and bundle with Vite.
 # (The backend has the same file for `bcrypt`.) Safe to commit: no secrets, just build policy.
 allowBuilds:
-  '@tailwindcss/oxide': true
+  "@tailwindcss/oxide": true
   esbuild: true

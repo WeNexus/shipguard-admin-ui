@@ -1,4 +1,3 @@
-
 const config = {
-  partialLinkToAdd : "/shipguard-admin-ui/assets/index-SEHWlQvd.js"
-}
+  partialLinkToAdd: "/shipguard-admin-ui/assets/index-SEHWlQvd.js",
+};

@@ -28,14 +28,21 @@ const Orders = () => {
     : new Date().toISOString();
   const endDate = period
     ? new Date(
-        new Date(period?.until).setDate(new Date(period.until).getDate() + 1)
+        new Date(period?.until).setDate(new Date(period.until).getDate() + 1),
       ).toISOString()
     : new Date().toISOString();
 
   useEffect(() => {
     setLoading(true);
     apiFetch("admin/api/orders", {
-      query: { startDate, endDate, page, limit: 50, filter: filters, searchTerm },
+      query: {
+        startDate,
+        endDate,
+        page,
+        limit: 50,
+        filter: filters,
+        searchTerm,
+      },
     })
       .then((res) => {
         setOrders(res.data);
