@@ -7,7 +7,8 @@ import FulfillmentRule from "./shared/fulfillment-rule";
 import ProductExclusions from "./shared/product-exclusions";
 import ClassicContent from "./shared/classic-content";
 import IconPicker from "./shared/icon-picker";
-import type { WidgetSettingsData } from "./dummy-data";
+import type { WidgetSettingsData } from "./types";
+import { currencySymbol } from "./copy";
 
 const CheckoutPage = ({ data }: { data: WidgetSettingsData }) => {
   const { checkout } = data;
@@ -17,7 +18,7 @@ const CheckoutPage = ({ data }: { data: WidgetSettingsData }) => {
       <BlockStack gap="400">
         <InsurancePricing
           pricing={data.pricing}
-          currency={data.currencySymbol}
+          currency={currencySymbol(data.currencyCode)}
         />
 
         <SettingCard

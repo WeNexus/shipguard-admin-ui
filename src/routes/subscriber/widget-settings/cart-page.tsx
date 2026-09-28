@@ -39,7 +39,8 @@ import ClassicContent from "./shared/classic-content";
 import IconPicker from "./shared/icon-picker";
 import ColorField from "./shared/color-field";
 import CollapsibleSection from "./shared/collapsible-section";
-import type { ButtonStyle, WidgetSettingsData } from "./dummy-data";
+import type { ButtonStyle, WidgetSettingsData } from "./types";
+import { currencySymbol } from "./copy";
 
 const FONT_WEIGHT_OPTIONS = [
   { label: "Normal", value: "normal" },
@@ -381,6 +382,7 @@ const ConditionalRules = ({
 
 const CartPage = ({ data }: { data: WidgetSettingsData }) => {
   const { cart } = data;
+  const currency = currencySymbol(data.currencyCode);
   const isClassic = cart.widgetTemplate === "template-1";
 
   return (
@@ -388,7 +390,7 @@ const CartPage = ({ data }: { data: WidgetSettingsData }) => {
       <BlockStack gap="400">
         <InsurancePricing
           pricing={data.pricing}
-          currency={data.currencySymbol}
+          currency={currency}
         />
         <TemplateSelector value={cart.widgetTemplate} />
         {isClassic ? (
@@ -406,7 +408,7 @@ const CartPage = ({ data }: { data: WidgetSettingsData }) => {
         {isClassic && (
           <ConditionalRules
             rules={cart.conditionalRules}
-            currency={data.currencySymbol}
+            currency={currency}
           />
         )}
 

@@ -5,6 +5,7 @@ export const SUBSCRIBER_TABS = [
   { id: "order", label: "Order" },
   { id: "app-subscription", label: "App-Subscription" },
   { id: "widget-settings", label: "Widget Settings" },
+  { id: "product", label: "Product" },
   { id: "diagnosis", label: "Diagnosis" },
 ] as const;
 

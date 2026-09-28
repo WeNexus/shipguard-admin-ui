@@ -4,6 +4,8 @@ import { ArrowLeftIcon } from "@shopify/polaris-icons";
 import SubscriberDetailsCart from "./subscriber-details-card";
 import AppControlCard from "./app-control-card";
 import WidgetSettings from "./widget-settings";
+import AppSubscription from "./app-subscription";
+import Product from "./product";
 import SubscriberTabSelect, {
   type SubscriberTabId,
 } from "./subscriber-tab-select";
@@ -109,7 +111,11 @@ const Subscriber = () => {
       {/*/>*/}
 
       {selectedTab === "widget-settings" ? (
-        <WidgetSettings />
+        <WidgetSettings domain={domain} />
+      ) : selectedTab === "app-subscription" ? (
+        <AppSubscription domain={domain} />
+      ) : selectedTab === "product" ? (
+        <Product domain={domain} />
       ) : selectedTab !== "order" ? (
         <div className="border rounded-lg shadow p-10 text-center">
           <Text as="p" variant="headingLg" tone="subdued">

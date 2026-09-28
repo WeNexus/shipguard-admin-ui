@@ -1,6 +1,6 @@
 import { ChoiceList, TextField } from "@shopify/polaris";
 import type { ReactNode } from "react";
-import type { PolicyType } from "../dummy-data";
+import type { PolicyType } from "../types";
 
 const POLICY_CHOICES = [
   { label: "None", value: "NONE" },

@@ -1,13 +1,17 @@
 import { InlineStack, Text } from "@shopify/polaris";
 import { WIDGET_ICONS } from "./widget-icons";
 
+// A merchant-uploaded icon isn't one of the built-ins; show it too, or nothing would look selected.
 const IconPicker = ({ selected }: { selected: string }) => (
   <InlineStack gap="200" blockAlign="center">
     <Text as="span" fontWeight="bold">
       Insurance icon
     </Text>
     <InlineStack gap="200" wrap>
-      {WIDGET_ICONS.map((src) => (
+      {(WIDGET_ICONS.includes(selected)
+        ? WIDGET_ICONS
+        : [...WIDGET_ICONS, selected]
+      ).map((src) => (
         <div
           key={src}
           className={`flex h-[60px] w-[60px] items-center justify-center rounded-lg p-1 ${

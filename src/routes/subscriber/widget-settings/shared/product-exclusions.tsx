@@ -7,7 +7,7 @@ import {
 } from "@shopify/polaris";
 import { DisabledIcon, ImageIcon } from "@shopify/polaris-icons";
 import SettingCard from "./setting-card";
-import type { ExcludedProduct } from "../dummy-data";
+import type { ExcludedProduct } from "../types";
 
 const variantSubtext = (product: ExcludedProduct) => {
   const selected = product.selectedVariants;

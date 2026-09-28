@@ -46,7 +46,7 @@ const SubscriberDetailsCart = ({
       {
         title: "Protected Orders",
         value: protectedOrder,
-        bg: "#cff1cf",
+        bg: "#e2f6e2",
         icon: (
           <div className="bg-green-500 p-3 rounded text-white">
             <Icon source={StatusActiveIcon} />
@@ -56,7 +56,7 @@ const SubscriberDetailsCart = ({
       {
         title: "Unprotected Orders",
         value: unprotectedOrder,
-        bg: "#ffd2e9",
+        bg: "#ffe5f2",
         icon: (
           <div className="bg-red-500 p-3 rounded text-white">
             <Icon source={XCircleIcon} />
@@ -66,7 +66,7 @@ const SubscriberDetailsCart = ({
       {
         title: "Conversion Rate",
         value: `${conversionRate.toFixed(2)}%`,
-        bg: "#ffcccc",
+        bg: "#ffe2e2",
         icon: (
           <div className="bg-gray-500 p-3 rounded text-white">
             <Icon source={BlogIcon} />
@@ -76,7 +76,7 @@ const SubscriberDetailsCart = ({
       {
         title: "Secured Revenue",
         value: moneyFormater(securedRevenue, moneyFormat) ?? 0,
-        bg: "#ffaacc",
+        bg: "#ffd5e6",
         icon: (
           <div className="bg-gray-500 p-3 rounded text-white">
             <Icon source={BlogIcon} />
@@ -86,7 +86,7 @@ const SubscriberDetailsCart = ({
       {
         title: "Insurance Earning",
         value: moneyFormater(insuranceEarning, moneyFormat) ?? 0,
-        bg: "#ffccaa",
+        bg: "#ffe2cf",
         icon: (
           <div className="bg-green-500 p-3 rounded text-white">
             <Icon source={BlogIcon} />

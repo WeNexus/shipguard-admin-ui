@@ -2,7 +2,7 @@ import { FormLayout, TextField } from "@shopify/polaris";
 import { ContentIcon } from "@shopify/polaris-icons";
 import SettingCard from "./setting-card";
 import PolicyFields from "./policy-fields";
-import type { ClassicContent as ClassicContentData } from "../dummy-data";
+import type { ClassicContent as ClassicContentData } from "../types";
 
 // "Content" card shared by the Cart page (Classic template) and the Checkout page.
 const ClassicContent = ({ content }: { content: ClassicContentData }) => (

@@ -11,6 +11,10 @@ import Integrations from "./routes/integrations";
 import Review from "./routes/review";
 import Gql from "./routes/gql";
 import Webhooks from "./routes/webhooks";
+import NotificationSettings from "./routes/notification-settings";
+import ProblemStores from "./routes/notification-settings/problems";
+import StoreSenderSettings from "./routes/notification-settings/store-settings";
+import SenderStatsPage from "./routes/notification-settings/stats";
 
 export const router = createHashRouter([
   { path: "login", element: <Login /> },
@@ -30,6 +34,11 @@ export const router = createHashRouter([
       { path: "gql", element: <Gql /> },
       // No sidebar entry: reached from the dashboard's "Re-register webhooks" button.
       { path: "webhooks", element: <Webhooks /> },
+      // No sidebar entry: reached from the dashboard's "Notification settings" button.
+      { path: "notification-settings", element: <NotificationSettings /> },
+      { path: "notification-settings/problems", element: <ProblemStores /> },
+      { path: "notification-settings/store", element: <StoreSenderSettings /> },
+      { path: "notification-settings/stats", element: <SenderStatsPage /> },
     ],
   },
   { path: "*", element: <>Page Not Found!</> },

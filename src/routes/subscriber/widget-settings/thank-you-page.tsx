@@ -41,7 +41,8 @@ import type {
   ThankYouPageSettings,
   ThankYouTextStyle,
   WidgetSettingsData,
-} from "./dummy-data";
+} from "./types";
+import { currencySymbol } from "./copy";
 
 const UNPAID_FLOW_DOCS =
   "https://help.shipguard.app/portal/en/kb/articles/unpaid-package-protection-flow";
@@ -415,7 +416,7 @@ const ThankYouPage = ({ data }: { data: WidgetSettingsData }) => {
       <BlockStack gap="400">
         <InsurancePricing
           pricing={data.pricing}
-          currency={data.currencySymbol}
+          currency={currencySymbol(data.currencyCode)}
         />
 
         <SettingCard

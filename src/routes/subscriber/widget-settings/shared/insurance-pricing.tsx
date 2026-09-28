@@ -13,7 +13,7 @@ import { InfoIcon, ShieldCheckMarkIcon } from "@shopify/polaris-icons";
 import type { ReactNode } from "react";
 import SettingCard from "./setting-card";
 import InfoCallout from "./info-callout";
-import type { PricingSettings } from "../dummy-data";
+import type { PricingSettings } from "../types";
 
 const PRICING_DOCS =
   "https://help.shipguard.app/portal/en/kb/articles/shipping-protection-pricing";
@@ -124,6 +124,13 @@ const InsurancePricing = ({
         />
       </InlineGrid>
       <Divider />
+
+      {pricing.insurancePriceType === "NOT_SELECTED" && (
+        <Text as="p" tone="caution">
+          No price chosen yet. The widget can't charge for protection until the
+          merchant picks Percentage or Fixed and saves.
+        </Text>
+      )}
 
       {isPercentage && (
         <BlockStack gap="300">
