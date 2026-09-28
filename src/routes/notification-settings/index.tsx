@@ -1,6 +1,7 @@
-import { BlockStack, Button, Card, Icon, Page, Text } from "@shopify/polaris";
+import { BlockStack, Page } from "@shopify/polaris";
 import { ChartVerticalIcon, EmailIcon, StoreIcon } from "@shopify/polaris-icons";
 import { useNavigate } from "react-router";
+import ActionCard from "../../components/common/action-card";
 
 const ACTIONS = [
   {
@@ -35,21 +36,13 @@ export default function NotificationSettings() {
     >
       <BlockStack gap="300">
         {ACTIONS.map((action) => (
-          <Card key={action.to}>
-            <div className="flex items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gray-100">
-                  <Icon source={action.icon} tone="base" />
-                </span>
-                <Text as="p" tone="subdued">
-                  {action.hint}
-                </Text>
-              </div>
-              <Button variant="primary" onClick={() => navigate(action.to)}>
-                {action.label}
-              </Button>
-            </div>
-          </Card>
+          <ActionCard
+            key={action.to}
+            icon={action.icon}
+            hint={action.hint}
+            label={action.label}
+            onClick={() => navigate(action.to)}
+          />
         ))}
       </BlockStack>
     </Page>

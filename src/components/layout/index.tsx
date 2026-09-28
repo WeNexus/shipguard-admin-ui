@@ -2,11 +2,9 @@ import { useMemo, useState } from "react";
 import type { INavItem } from "./type";
 import { Navigate, Outlet, useLocation } from "react-router";
 import {
-  CodeIcon,
   HomeIcon,
   OrderIcon,
   PackageIcon,
-  SettingsIcon,
   StarIcon,
 } from "@shopify/polaris-icons";
 import Sidebar from "./sidebar";
@@ -24,12 +22,6 @@ const Layout = () => {
       { name: "Dashboard", url: "/", icon: HomeIcon },
       { name: "Subscribers", url: "/subscribers", icon: PackageIcon },
       { name: "Orders", url: "/orders", icon: OrderIcon },
-      {
-        name: "Settings",
-        url: "/settings",
-        icon: SettingsIcon,
-        // hasDropdown: true,
-      },
       { name: "Integrations", url: "/integrations", icon: OrderIcon },
       {
         name: "Activity Log",
@@ -40,11 +32,6 @@ const Layout = () => {
         name: "Review Stats",
         url: "/review",
         icon: StarIcon,
-      },
-      {
-        name: "GraphQL",
-        url: "/gql",
-        icon: CodeIcon,
       },
     ].map((item) => {
       const isClaimsRoute = /^\/subscribers\/[^/]+$/.test(location.pathname);

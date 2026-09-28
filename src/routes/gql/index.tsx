@@ -1,5 +1,6 @@
-import { Banner, Button, InlineStack, Layout, Page } from "@shopify/polaris";
+import { Badge, Banner, Button, InlineStack, Layout, Page } from "@shopify/polaris";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 import { apiFetch, ApiError } from "../../lib/api-client";
 import StoreSelect from "../../components/common/store-select";
 import QueryEditor from "./query-editor";
@@ -22,6 +23,7 @@ const DEFAULT_QUERY = `{
  * every run is audited server-side against the admin who fired it.
  */
 export default function Gql() {
+  const navigate = useNavigate();
   const [stores, setStores] = useState<GqlStoreOption[]>([]);
   const [selected, setSelected] = useState("");
   const [query, setQuery] = useState(DEFAULT_QUERY);
@@ -67,7 +69,13 @@ export default function Gql() {
   };
 
   return (
-    <Page fullWidth title="GraphQL">
+    // No sidebar entry: reached from the dashboard's Support tools ("Only for dev").
+    <Page
+      fullWidth
+      title="GraphQL"
+      titleMetadata={<Badge tone="warning">Only for dev</Badge>}
+      backAction={{ content: "Dashboard", onAction: () => navigate("/") }}
+    >
       {loadError && (
         <div className="mb-3">
           <Banner tone="critical">{loadError}</Banner>

@@ -2,12 +2,14 @@ import {
   Button,
   Card,
   Frame,
+  Page,
   Select,
   SkeletonBodyText,
   Text,
   Toast,
 } from "@shopify/polaris";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 import { apiFetch } from "../../lib/api-client";
 
 type SettingsData = {
@@ -18,6 +20,7 @@ type SettingsData = {
 const SETTINGS_PATH = "admin/api/global-settings/subscription-config";
 
 const Settings = () => {
+  const navigate = useNavigate();
   const [data, setData] = useState<SettingsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
@@ -60,7 +63,12 @@ const Settings = () => {
 
   return (
     <Frame>
-      <div className={"p-5"}>
+      {/* No sidebar entry: reached from the dashboard's "App subscription settings" card. */}
+      <Page
+        title="App subscription settings"
+        subtitle="Applies to every store"
+        backAction={{ content: "Dashboard", onAction: () => navigate("/") }}
+      >
         <Card>
           <Text as={"h3"} variant={"headingMd"}>
             Global Settings
@@ -130,7 +138,7 @@ const Settings = () => {
             </>
           )}
         </Card>
-      </div>
+      </Page>
 
       {toastMessage && (
         <Toast
