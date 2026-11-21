@@ -9,12 +9,14 @@ import ActivityLogs from "./routes/logs";
 import Settings from "./routes/settings";
 import Integrations from "./routes/integrations";
 import Review from "./routes/review";
+import FeatureRequests from "./routes/feature-requests";
 import Gql from "./routes/gql";
 import Webhooks from "./routes/webhooks";
 import NotificationSettings from "./routes/notification-settings";
 import ProblemStores from "./routes/notification-settings/problems";
 import StoreSenderSettings from "./routes/notification-settings/store-settings";
 import SenderStatsPage from "./routes/notification-settings/stats";
+import AppVisitors from "./routes/app-visitors";
 
 export const router = createHashRouter([
   { path: "login", element: <Login /> },
@@ -31,6 +33,7 @@ export const router = createHashRouter([
       { path: "settings", element: <Settings /> },
       { path: "integrations", element: <Integrations /> },
       { path: "review", element: <Review /> },
+      { path: "feature-requests", element: <FeatureRequests /> },
       { path: "gql", element: <Gql /> },
       // No sidebar entry: reached from the dashboard's "Re-register webhooks" button.
       { path: "webhooks", element: <Webhooks /> },
@@ -39,6 +42,8 @@ export const router = createHashRouter([
       { path: "notification-settings/problems", element: <ProblemStores /> },
       { path: "notification-settings/store", element: <StoreSenderSettings /> },
       { path: "notification-settings/stats", element: <SenderStatsPage /> },
+      // No sidebar entry: reached from the dashboard's "App visitors" card.
+      { path: "app-visitors", element: <AppVisitors /> },
     ],
   },
   { path: "*", element: <>Page Not Found!</> },

@@ -3,6 +3,7 @@ import type { INavItem } from "./type";
 import { Navigate, Outlet, useLocation } from "react-router";
 import {
   HomeIcon,
+  LightbulbIcon,
   OrderIcon,
   PackageIcon,
   StarIcon,
@@ -32,6 +33,11 @@ const Layout = () => {
         name: "Review Stats",
         url: "/review",
         icon: StarIcon,
+      },
+      {
+        name: "Feature Requests",
+        url: "/feature-requests",
+        icon: LightbulbIcon,
       },
     ].map((item) => {
       const isClaimsRoute = /^\/subscribers\/[^/]+$/.test(location.pathname);

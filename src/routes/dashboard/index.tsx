@@ -1,5 +1,5 @@
 import { Text } from "@shopify/polaris";
-import { CodeIcon, ConnectIcon, EmailIcon, SettingsIcon } from "@shopify/polaris-icons";
+import { CodeIcon, ConnectIcon, EmailIcon, PersonIcon, SettingsIcon } from "@shopify/polaris-icons";
 import { useNavigate } from "react-router";
 import ActionCard from "../../components/common/action-card";
 
@@ -45,6 +45,13 @@ const Dashboard = () => {
           hint="Choose which plan new stores start on, and whether merchants can see the Founder plan. Changes apply to every store."
           label="Open settings"
           onClick={() => navigate("/settings")}
+        />
+        <ActionCard
+          icon={PersonIcon}
+          title="App visitors"
+          hint="See which merchant staff opened ShipGuard and when. Resets whenever the server restarts."
+          label="View visitors"
+          onClick={() => navigate("/app-visitors")}
         />
         <ActionCard
           icon={CodeIcon}
