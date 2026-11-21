@@ -25,6 +25,18 @@ export interface SupportMessage {
 
 const OPEN_SETTINGS = "Open the ShipGuard app → **Settings** → **Notification**.";
 const SAVE = "Click **Save**.";
+// Sender emails (Phase 47) are managed on a different page than the old sender choice.
+const OPEN_SENDER_EMAILS = "Open the ShipGuard app → **Tracking & Portal** → **Notification**.";
+
+// Both kinds send customer mail through ShipGuard's Postmark account.
+const viaShipGuard = (detail: StoreSenderDetail) =>
+  detail.kind === "DEFAULT" ||
+  detail.kind === "VERIFIED_DOMAIN" ||
+  detail.kind === "VERIFIED_DOMAIN_UNAVAILABLE";
+
+/** Enabled sender emails whose domain isn't usable — the ones whose emails are skipped. */
+const unverifiedSenders = (detail: StoreSenderDetail) =>
+  detail.senders.filter((s) => s.enabled && !s.domainVerified).map((s) => s.email);
 
 const GOOGLE_GUIDE = {
   label: "How to connect Google SMTP",
@@ -123,12 +135,35 @@ export function problemMessage(problem: Problem, detail: StoreSenderDetail): Sup
     case "system_sender_unconfigured":
       return {
         happening:
-          detail.kind === "DEFAULT"
+          viaShipGuard(detail)
             ? "ShipGuard's own email sender is not set up on our server, so none of this store's " +
               "emails can be sent. This is our problem, not the merchant's."
             : "ShipGuard's own email sender is not set up on our server, so new-claim alerts to the " +
               "merchant can't be sent. This is our problem, not the merchant's.",
         escalate: true,
+      };
+    case "domain_sender_unavailable": {
+      const emails = unverifiedSenders(detail);
+      return {
+        happening:
+          "The store sends from its own email address, but that address's domain isn't verified, " +
+          "so those emails are skipped — ShipGuard does not fall back to its own address." +
+          (emails.length ? ` Not verified: ${emails.join(", ")}.` : ""),
+        steps: [
+          OPEN_SENDER_EMAILS,
+          "Under **Notifications to customers**, find the email marked **Not verified** and click " +
+            "**Verify**.",
+          "Add the DNS records shown to your domain provider, then click **Verify** again. DNS " +
+            "changes can take a few hours.",
+        ],
+      };
+    }
+    case "legacy_smtp_not_allowed":
+      return {
+        happening:
+          "The store is still set to send through its own email server or Gmail, which only older " +
+          "stores may keep using. Nothing is being sent.",
+        steps: [OPEN_SETTINGS, "Choose **Use default email**.", SAVE],
       };
     case "template_missing":
       return {
@@ -172,6 +207,10 @@ export function problemShort(problem: Problem): string {
       return "Own email server — send a test to confirm";
     case "system_sender_unconfigured":
       return "ShipGuard's own sender is down — engineering";
+    case "domain_sender_unavailable":
+      return "Own sender email's domain not verified";
+    case "legacy_smtp_not_allowed":
+      return "Own email server/Gmail no longer allowed for this store";
     case "template_missing": {
       const n = problem.templates?.length ?? 0;
       return `${n} email${n === 1 ? "" : "s"} missing: ${listNames(problem.templates)}`;
@@ -202,7 +241,9 @@ function senderBroken(detail: StoreSenderDetail): boolean {
       p.code === "gmail_not_connected" ||
       p.code === "smtp_no_config" ||
       p.code === "smtp_incomplete" ||
-      (p.code === "system_sender_unconfigured" && detail.kind === "DEFAULT"),
+      p.code === "domain_sender_unavailable" ||
+      p.code === "legacy_smtp_not_allowed" ||
+      (p.code === "system_sender_unconfigured" && viaShipGuard(detail)),
   );
 }
 
@@ -228,6 +269,16 @@ export function senderLine(detail: StoreSenderDetail): string {
   switch (detail.kind) {
     case "DEFAULT":
       return "Customer emails are sent from ShipGuard's address, no-reply@shipguard.app.";
+    case "VERIFIED_DOMAIN": {
+      const emails = detail.senders.filter((s) => s.enabled).map((s) => s.email);
+      return `Customer emails are sent from the merchant's own address${
+        emails.length ? `, ${emails.join(", ")}` : ""
+      }, through ShipGuard.`;
+    }
+    case "VERIFIED_DOMAIN_UNAVAILABLE":
+      return "Customer emails are set to go from the merchant's own address, through ShipGuard.";
+    case "CUSTOM_NOT_ALLOWED":
+      return "Customer emails are set to go through the merchant's own email server or Gmail.";
     case "GMAIL":
       return `Customer emails are sent from the merchant's Gmail${
         detail.google.user?.email ? `, ${detail.google.user.email}` : ""
@@ -245,7 +296,46 @@ export function senderLine(detail: StoreSenderDetail): string {
 
 type Diagnosis = NonNullable<AdminTestEmailResult["error"]>["diagnosis"];
 
+// Postmark answers. Apart from `suppressed`, the merchant can't fix any of these — they're ours.
 const TEST_FAILURE: Record<Diagnosis, SupportMessage> = {
+  suppressed: {
+    happening:
+      "The address you sent the test to is blocked — it bounced or marked an email as spam " +
+      "before. Send the test to a different address.",
+  },
+  "rate-limited": {
+    happening: "Too many emails were sent in a short time. Wait a minute and send the test again.",
+  },
+  "provider-unavailable": {
+    happening:
+      "Our email provider (Postmark) is having trouble right now. Try the test again in a few " +
+      "minutes; if it keeps failing, pass it to engineering.",
+  },
+  ambiguous: {
+    happening:
+      "Our email provider didn't confirm the send — the email may still arrive. Check the inbox " +
+      "before sending another.",
+  },
+  account: {
+    happening: "Our email provider account has a problem. This is ours to fix.",
+    escalate: true,
+  },
+  auth: {
+    happening: "Our email provider rejected ShipGuard's credentials. This is ours to fix.",
+    escalate: true,
+  },
+  "not-configured": {
+    happening: "ShipGuard's email sending is not set up on our server. This is ours to fix.",
+    escalate: true,
+  },
+  "invalid-request": {
+    happening: "Our email provider refused the email as invalid. This is ours to fix.",
+    escalate: true,
+  },
+  "payload-too-large": {
+    happening: "Our email provider refused the email as too large. This is ours to fix.",
+    escalate: true,
+  },
   "auth-rejected": {
     happening: "The email server rejected the Username or Password.",
     steps: [

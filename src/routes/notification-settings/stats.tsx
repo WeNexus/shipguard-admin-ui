@@ -9,8 +9,11 @@ import { SENDER_KIND_META } from "./type";
 
 const KIND_ORDER: SenderKind[] = [
   "DEFAULT",
+  "VERIFIED_DOMAIN",
   "CUSTOM_SMTP",
   "GMAIL",
+  "VERIFIED_DOMAIN_UNAVAILABLE",
+  "CUSTOM_NOT_ALLOWED",
   "CUSTOM_SMTP_INCOMPLETE",
   "GMAIL_DISCONNECTED",
   "CUSTOM_NO_CONFIG",
@@ -119,6 +122,7 @@ export default function SenderStatsPage() {
                 </Text>
                 <Text as="p">
                   <b>{stats.bySender.shipguard}</b> use ShipGuard's address ·{" "}
+                  <b>{stats.bySender.ownDomain}</b> use their own address via ShipGuard ·{" "}
                   <b>{stats.bySender.gmail}</b> use their Gmail ·{" "}
                   <b>{stats.bySender.ownServer}</b> use their own email server
                 </Text>

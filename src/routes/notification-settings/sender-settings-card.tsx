@@ -1,9 +1,12 @@
 import {
   AccountConnection,
+  Badge,
+  Banner,
   BlockStack,
   Box,
   Card,
   ChoiceList,
+  DataTable,
   Divider,
   Layout,
   Select,
@@ -246,6 +249,53 @@ function DefaultSender({ detail }: { detail: StoreSenderDetail }) {
   );
 }
 
+/**
+ * The merchant's sender emails and domains (Tracking & Portal → Notification), read-only. Disabled
+ * senders are listed too: support is often asked "why isn't my address used?".
+ */
+export function SenderEmailsCard({ detail }: { detail: StoreSenderDetail }) {
+  return (
+    <Card>
+      <BlockStack gap="300">
+        <Text as="h4" variant="headingMd">
+          Sender emails
+        </Text>
+        {detail.senders.length === 0 ? (
+          <Text as="p" tone="subdued">
+            No sender emails added.
+          </Text>
+        ) : (
+          <DataTable
+            columnContentTypes={["text", "text", "text", "text", "text"]}
+            headings={["Email", "Sender name", "Reply-to", "Enabled", "Domain"]}
+            rows={detail.senders.map((s) => [
+              s.email,
+              s.senderName,
+              s.replyTo ?? "Same as email",
+              s.enabled ? "Yes" : "No",
+              <Badge key={s.email} tone={s.domainVerified ? "success" : "critical"}>
+                {s.domainVerified ? "Verified" : "Not verified"}
+              </Badge>,
+            ])}
+          />
+        )}
+        {detail.domains.length > 0 && (
+          <DataTable
+            columnContentTypes={["text", "text", "text", "text"]}
+            headings={["Domain", "Status", "Last checked", "Last error"]}
+            rows={detail.domains.map((d) => [
+              d.domain,
+              `${d.status}${d.dkimVerified ? " · DKIM ✓" : ""}${d.returnPathVerified ? " · Return-Path ✓" : ""}`,
+              d.lastCheckedAt ? new Date(d.lastCheckedAt).toLocaleString() : "Never",
+              d.lastError ?? "—",
+            ])}
+          />
+        )}
+      </BlockStack>
+    </Card>
+  );
+}
+
 const TABS = [
   { id: "notify-customer", content: "Notify customer" },
   { id: "notify-merchant", content: "Notify merchant" },
@@ -266,6 +316,21 @@ export default function SenderSettingsCard({
 }) {
   // A store that never saved the screen has no row; the merchant app shows DEFAULT for it.
   const senderFrom = detail.notification?.senderFrom ?? "DEFAULT";
+  // Same gates as the merchant's senderInfo.tsx: own SMTP/Gmail is offered to grandfathered
+  // stores only, and enabled sender emails replace the default address.
+  const legacyAllowed = detail.notification?.legacySmtpAllowed === true;
+  const senderEmailsActive = detail.senders.some((s) => s.enabled);
+  const choices = [
+    {
+      label: (
+        <div>
+          Use default email <span className="text-blue-800">({DEFAULT_SENDER_EMAIL})</span>
+        </div>
+      ),
+      value: "DEFAULT",
+    },
+    ...(legacyAllowed ? [{ label: "Use custom domain email (SMTP setup)", value: "CUSTOM" }] : []),
+  ];
 
   return (
     <Card>
@@ -279,29 +344,30 @@ export default function SenderSettingsCard({
           <Text as="h4" variant="headingMd">
             Sender info
           </Text>
+          {senderFrom === "DEFAULT" && senderEmailsActive && (
+            <Banner tone="info">
+              Emails are sent from your own sender emails. Manage them in Tracking &amp; Portal →
+              Notification.
+            </Banner>
+          )}
+          {senderFrom === "CUSTOM" && !legacyAllowed && (
+            <Banner tone="warning">
+              Your own SMTP / Gmail sender is no longer available for this store, so emails are not
+              being sent. Choose the default email and save.
+            </Banner>
+          )}
           <ChoiceList
             title=""
             disabled
-            choices={[
-              {
-                label: (
-                  <div>
-                    Use default email{" "}
-                    <span className="text-blue-800">({DEFAULT_SENDER_EMAIL})</span>
-                  </div>
-                ),
-                value: "DEFAULT",
-              },
-              { label: "Use custom domain email (SMTP setup)", value: "CUSTOM" },
-            ]}
+            choices={choices}
             selected={[senderFrom]}
             onChange={() => {}}
           />
           {senderFrom === "DEFAULT" ? (
             <DefaultSender detail={detail} />
-          ) : (
+          ) : legacyAllowed ? (
             <CustomSender detail={detail} />
-          )}
+          ) : null}
         </BlockStack>
       ) : (
         <BlockStack gap="300">

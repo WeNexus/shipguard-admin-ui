@@ -6,6 +6,9 @@
 /** How a store's customer emails go out. Classified server-side — never re-derived here. */
 export type SenderKind =
   | "DEFAULT"
+  | "VERIFIED_DOMAIN"
+  | "VERIFIED_DOMAIN_UNAVAILABLE"
+  | "CUSTOM_NOT_ALLOWED"
   | "GMAIL"
   | "GMAIL_DISCONNECTED"
   | "CUSTOM_SMTP"
@@ -16,6 +19,9 @@ type BadgeTone = "success" | "info" | "critical" | undefined;
 
 export const SENDER_KIND_META: Record<SenderKind, { label: string; tone: BadgeTone }> = {
   DEFAULT: { label: "System default", tone: undefined },
+  VERIFIED_DOMAIN: { label: "Own sender email", tone: "success" },
+  VERIFIED_DOMAIN_UNAVAILABLE: { label: "Own sender email · domain not verified", tone: "critical" },
+  CUSTOM_NOT_ALLOWED: { label: "Own SMTP/Gmail · not allowed", tone: "critical" },
   GMAIL: { label: "Gmail", tone: "info" },
   GMAIL_DISCONNECTED: { label: "Gmail · not connected", tone: "critical" },
   CUSTOM_SMTP: { label: "Custom SMTP", tone: "success" },
@@ -32,6 +38,8 @@ export type ProblemCode =
   | "smtp_no_login"
   | "smtp_untested"
   | "system_sender_unconfigured"
+  | "domain_sender_unavailable"
+  | "legacy_smtp_not_allowed"
   | "template_missing"
   | "no_merchant_recipient"
   | "uninstalled";
@@ -89,7 +97,25 @@ export interface StoreSenderDetail {
     replyTo: string | null;
     merchantEmail: string | null;
     updatedAt: string | null;
+    /** Grandfathered store: may still use its own SMTP/Gmail. */
+    legacySmtpAllowed: boolean;
   } | null;
+  /** Every sender email, disabled too, oldest first. `domainVerified` = usable for sending. */
+  senders: {
+    email: string;
+    senderName: string;
+    enabled: boolean;
+    replyTo: string | null;
+    domainVerified: boolean;
+  }[];
+  domains: {
+    domain: string;
+    status: "PENDING_DNS" | "VERIFYING" | "VERIFIED" | "FAILED" | "DISCONNECTED";
+    dkimVerified: boolean;
+    returnPathVerified: boolean;
+    lastCheckedAt: string | null;
+    lastError: string | null;
+  }[];
   smtp: {
     provider: string | null;
     from: string | null;
@@ -143,16 +169,27 @@ export interface StoreEmailTemplates {
 
 /**
  * `POST admin/notification-settings/test-email`. A failed send is a 200 with `success: false` and,
- * for SMTP, the server's own error — a result to read, not a request failure.
+ * for SMTP or Postmark, the provider's own error — a result to read, not a request failure.
  */
 export interface AdminTestEmailResult {
   success: boolean;
-  transport: "smtp" | "gmail" | null;
+  transport: "postmark" | "smtp" | "gmail" | null;
   from: string | null;
   message: string;
   durationMs: number;
   error: {
     diagnosis:
+      // Postmark (DEFAULT / own sender email stores)
+      | "suppressed"
+      | "invalid-request"
+      | "payload-too-large"
+      | "account"
+      | "auth"
+      | "not-configured"
+      | "rate-limited"
+      | "provider-unavailable"
+      | "ambiguous"
+      // Own SMTP (grandfathered stores)
       | "egress-blocked-or-filtered"
       | "connection-refused"
       | "dns-failure"
@@ -173,7 +210,8 @@ export interface SenderStats {
   totalStores: number;
   /** Same verdict as the problem list, so each number matches its tab. */
   byState: Record<VerdictState, number>;
-  bySender: { shipguard: number; gmail: number; ownServer: number };
+  /** `ownDomain` = the store's own address, still sent through ShipGuard (Postmark). */
+  bySender: { shipguard: number; ownDomain: number; gmail: number; ownServer: number };
   byKind: Record<SenderKind, number>;
   /** DEFAULT stores still holding a filled custom SMTP row — already counted inside DEFAULT. */
   dormantCustomConfig: number;

@@ -12,7 +12,10 @@ import { useNavigate, useSearchParams } from "react-router";
 import { ApiError, apiFetch } from "../../lib/api-client";
 import StoreSelect from "../../components/common/store-select";
 import type { StoreOption } from "../../components/common/type";
-import SenderSettingsCard, { SmtpConnectionFields } from "./sender-settings-card";
+import SenderSettingsCard, {
+  SenderEmailsCard,
+  SmtpConnectionFields,
+} from "./sender-settings-card";
 import EmailTemplatesCard from "./email-templates/email-templates-card";
 import TestEmailCard from "./test-email-card";
 import VerdictCard, { applyTestResult } from "./support/verdict-card";
@@ -117,6 +120,9 @@ function StoreView({ detail }: { detail: StoreSenderDetail }) {
         </Text>
       </BlockStack>
       <SenderSettingsCard detail={detail} selectedTab={selectedTab} onSelectTab={setSelectedTab} />
+      {(detail.senders.length > 0 || detail.domains.length > 0) && (
+        <SenderEmailsCard detail={detail} />
+      )}
       <EmailTemplatesCard data={templates} error={templatesError} selectedTab={selectedTab} />
 
       <EngineerDetails detail={detail} />
