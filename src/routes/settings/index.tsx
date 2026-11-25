@@ -10,7 +10,6 @@ import {
 } from "@shopify/polaris";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import SwitchWithLoading from "../../components/common/switch-with-loading";
 import { apiFetch } from "../../lib/api-client";
 
 type SettingsData = {
@@ -105,7 +104,7 @@ const Settings = () => {
             </div>
           ) : (
             <>
-              <div className={"grid grid-cols-2 gap-2 mt-4"}>
+              <div className={"grid grid-cols-2 gap-x-2 gap-y-4 mt-4"}>
                 <div>
                   <Select
                     label="Show Founder to merchant"
@@ -142,30 +141,23 @@ const Settings = () => {
                     }
                   />
                 </div>
-              </div>
-
-              <div className="mt-4 grid grid-cols-[auto_1fr] items-center gap-3">
-                <SwitchWithLoading
-                  switchOn={data.offerFounderOnNewInstalls}
-                  isLoading={saving}
-                  labelledBy="founder-new-installs-label"
-                  describedBy="founder-new-installs-help"
-                  handleSwitch={() =>
-                    setData({
-                      ...data,
-                      offerFounderOnNewInstalls:
-                        !data.offerFounderOnNewInstalls,
-                    })
-                  }
-                />
                 <div>
-                  <Text as="p" id="founder-new-installs-label">
-                    Offer founder plan on new installs
-                  </Text>
-                  <Text as="p" id="founder-new-installs-help" tone="subdued">
-                    First-time Monthly and Usage stores can see Founder. Turning
-                    this off keeps offers already granted.
-                  </Text>
+                  <Select
+                    label="Offer founder plan on new installs"
+                    helpText="First-time Monthly and Usage stores can see Founder. Turning this off keeps offers already granted."
+                    options={[
+                      { label: "On", value: "on" },
+                      { label: "Off", value: "off" },
+                    ]}
+                    value={data.offerFounderOnNewInstalls ? "on" : "off"}
+                    disabled={saving}
+                    onChange={(value) =>
+                      setData({
+                        ...data,
+                        offerFounderOnNewInstalls: value === "on",
+                      })
+                    }
+                  />
                 </div>
               </div>
 
