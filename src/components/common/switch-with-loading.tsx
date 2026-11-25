@@ -5,15 +5,24 @@ interface SwitchWithLoadingProps {
   switchOn: boolean;
   handleSwitch?: () => void;
   isLoading?: boolean;
+  labelledBy?: string;
+  describedBy?: string;
 }
 
 const SwitchWithLoading = ({
   switchOn,
   handleSwitch = () => {},
   isLoading = false,
+  labelledBy,
+  describedBy,
 }: SwitchWithLoadingProps) => {
   return (
     <button
+      type="button"
+      role={labelledBy ? "switch" : undefined}
+      aria-checked={labelledBy ? switchOn : undefined}
+      aria-labelledby={labelledBy}
+      aria-describedby={describedBy}
       onClick={handleSwitch}
       disabled={isLoading}
       style={{

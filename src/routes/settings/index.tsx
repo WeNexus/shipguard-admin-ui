@@ -10,11 +10,13 @@ import {
 } from "@shopify/polaris";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
+import SwitchWithLoading from "../../components/common/switch-with-loading";
 import { apiFetch } from "../../lib/api-client";
 
 type SettingsData = {
   showFounderToMerchant: boolean;
   newUserSubscriptionPlan: "Free" | "Monthly" | "Usage";
+  offerFounderOnNewInstalls: boolean;
 };
 
 const SETTINGS_PATH = "admin/api/global-settings/subscription-config";
@@ -30,11 +32,13 @@ const Settings = () => {
   useEffect(() => {
     setLoading(true);
     setLoadError(false);
-    apiFetch(SETTINGS_PATH)
+    apiFetch<{ data: SettingsData }>(SETTINGS_PATH)
       .then((json) => {
         setData({
           showFounderToMerchant: json.data.showFounderToMerchant,
           newUserSubscriptionPlan: json.data.newUserSubscriptionPlan,
+          offerFounderOnNewInstalls:
+            json.data.offerFounderOnNewInstalls ?? false,
         });
       })
       .catch(() => {
@@ -49,8 +53,18 @@ const Settings = () => {
   const handleSave = () => {
     if (!data) return;
     setSaving(true);
-    apiFetch(SETTINGS_PATH, { method: "POST", body: data })
-      .then(() => {
+    apiFetch<{ status: number; data?: Partial<SettingsData> }>(SETTINGS_PATH, {
+      method: "POST",
+      body: data,
+    })
+      .then((json) => {
+        if (
+          json?.status !== 200 ||
+          json.data?.offerFounderOnNewInstalls !==
+            data.offerFounderOnNewInstalls
+        ) {
+          throw new Error("Subscription settings were not saved");
+        }
         setToastMessage("Settings saved");
       })
       .catch(() => {
@@ -130,6 +144,31 @@ const Settings = () => {
                 </div>
               </div>
 
+              <div className="mt-4 grid grid-cols-[auto_1fr] items-center gap-3">
+                <SwitchWithLoading
+                  switchOn={data.offerFounderOnNewInstalls}
+                  isLoading={saving}
+                  labelledBy="founder-new-installs-label"
+                  describedBy="founder-new-installs-help"
+                  handleSwitch={() =>
+                    setData({
+                      ...data,
+                      offerFounderOnNewInstalls:
+                        !data.offerFounderOnNewInstalls,
+                    })
+                  }
+                />
+                <div>
+                  <Text as="p" id="founder-new-installs-label">
+                    Offer founder plan on new installs
+                  </Text>
+                  <Text as="p" id="founder-new-installs-help" tone="subdued">
+                    First-time Monthly and Usage stores can see Founder. Turning
+                    this off keeps offers already granted.
+                  </Text>
+                </div>
+              </div>
+
               <div className={"flex justify-end mt-4"}>
                 <Button variant="primary" loading={saving} onClick={handleSave}>
                   Save
@@ -143,7 +182,7 @@ const Settings = () => {
       {toastMessage && (
         <Toast
           content={toastMessage}
-          error
+          error={toastMessage !== "Settings saved"}
           onDismiss={() => setToastMessage(null)}
         />
       )}
